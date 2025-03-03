@@ -9,18 +9,18 @@ export const createEmployee = async (
     res: Response,
 ) => {
     try {
-        const {
-            dni,
-            name,
-            lastName,
-            birthDate,
-            email,
-            phone,
-            country,
-            statusWork,
-            department,
-            position,
-        } = req.body;
+        // const {
+        //     dni,
+        //     name,
+        //     lastName,
+        //     birthDate,
+        //     email,
+        //     phone,
+        //     country,
+        //     // ? statusWork,
+        //     // ? department,
+        //     // ? position,
+        // } = req.body;
 
         // * Validación de datos...
         const validatedData = EmployeeSchema.parse(
@@ -28,8 +28,9 @@ export const createEmployee = async (
         );
 
         // * Formatear fecha...
-        const formattedBirthDate =
-            convertToMySQLDate(birthDate);
+        const formattedBirthDate = convertToMySQLDate(
+            req.body.birthDate,
+        );
 
         // * Validar conversión de fecha...
         if (!formattedBirthDate) {
@@ -56,25 +57,25 @@ export const createEmployee = async (
             DNI: newEmployee.dni,
             Nombres: newEmployee.name,
             Apellidos: newEmployee.lastName,
-            FechaNacimiento: birthDate, // > Fecha original del input...
+            FechaNacimiento: req.body.birthDate, // > Fecha original del input...
             FechaNacimientoFormateada: formattedBirthDate, // > Fecha en formato MySQL...
             Email: newEmployee.email,
             Telefono: newEmployee.phone,
             Pais: newEmployee.country,
-            EstadoLaboral: statusWork,
-            Departamento: department,
-            Cargo: position,
+            // ? EstadoLaboral: statusWork,
+            // ? Departamento: department,
+            // ? Cargo: position,
         });
     } catch (error: any) {
-        // Manejo de errores específicos
+        // * Manejo de errores específicos
         if (error instanceof Error) {
-            // Si es un error estándar de JavaScript
+            // > Si es un error estándar de JavaScript
             res.status(400).json({
                 error: error.message,
                 type: 'ValidationError',
             });
         } else {
-            // Para otros tipos de errores
+            // * Para otros tipos de errores
             res.status(500).json({
                 error: 'Error interno del servidor',
                 details:

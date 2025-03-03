@@ -19,11 +19,22 @@ const DateFormatter_1 = require("../../utils/DateFormatter");
 // ~ Se crea un nuevo empleado...
 const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { dni, name, lastName, birthDate, email, phone, country, statusWork, department, position, } = req.body;
+        // const {
+        //     dni,
+        //     name,
+        //     lastName,
+        //     birthDate,
+        //     email,
+        //     phone,
+        //     country,
+        //     // ? statusWork,
+        //     // ? department,
+        //     // ? position,
+        // } = req.body;
         // * Validación de datos...
         const validatedData = employeeSchema_1.EmployeeSchema.parse(req.body);
         // * Formatear fecha...
-        const formattedBirthDate = (0, DateFormatter_1.convertToMySQLDate)(birthDate);
+        const formattedBirthDate = (0, DateFormatter_1.convertToMySQLDate)(req.body.birthDate);
         // * Validar conversión de fecha...
         if (!formattedBirthDate) {
             return res.status(400).json({
@@ -46,27 +57,27 @@ const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
             DNI: newEmployee.dni,
             Nombres: newEmployee.name,
             Apellidos: newEmployee.lastName,
-            FechaNacimiento: birthDate, // > Fecha original del input...
+            FechaNacimiento: req.body.birthDate, // > Fecha original del input...
             FechaNacimientoFormateada: formattedBirthDate, // > Fecha en formato MySQL...
             Email: newEmployee.email,
             Telefono: newEmployee.phone,
             Pais: newEmployee.country,
-            EstadoLaboral: statusWork,
-            Departamento: department,
-            Cargo: position,
+            // ? EstadoLaboral: statusWork,
+            // ? Departamento: department,
+            // ? Cargo: position,
         });
     }
     catch (error) {
-        // Manejo de errores específicos
+        // * Manejo de errores específicos
         if (error instanceof Error) {
-            // Si es un error estándar de JavaScript
+            // > Si es un error estándar de JavaScript
             res.status(400).json({
                 error: error.message,
                 type: 'ValidationError',
             });
         }
         else {
-            // Para otros tipos de errores
+            // * Para otros tipos de errores
             res.status(500).json({
                 error: 'Error interno del servidor',
                 details: (error === null || error === void 0 ? void 0 : error.toString()) ||
