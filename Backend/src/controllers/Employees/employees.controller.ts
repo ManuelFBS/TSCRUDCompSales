@@ -23,14 +23,13 @@ export const createEmployee = async (
         } = req.body;
 
         // * Validación de datos...
-        const valedatedData = EmployeeSchema.parse(
+        const validatedData = EmployeeSchema.parse(
             req.body,
         );
 
         // * Formatear fecha...
-        const formattedBirthDate = convertToMySQLDate(
-            valedatedData.birthDate,
-        );
+        const formattedBirthDate =
+            convertToMySQLDate(birthDate);
 
         // * Validar conversión de fecha...
         if (!formattedBirthDate) {
@@ -42,13 +41,13 @@ export const createEmployee = async (
         }
 
         const newEmployee = await Employee.create({
-            dni,
-            name,
-            lastName,
+            dni: validatedData.dni,
+            name: validatedData.name,
+            lastName: validatedData.lastName,
             birthDate: formattedBirthDate,
-            email,
-            phone,
-            country,
+            email: validatedData.email,
+            phone: validatedData.phone,
+            country: validatedData.country,
         });
 
         res.status(201).json({

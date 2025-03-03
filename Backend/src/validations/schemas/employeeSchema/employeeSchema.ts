@@ -5,7 +5,6 @@ export const EmployeeSchema = z.object({
     dni: z.string().min(1, 'DNI is required...'),
     name: z.string().min(1, 'Name is required...'),
     lastName: z.string().min(1, 'Last name is required...'),
-    birthDate: z.string().date('yyyy-MM-dd'),
     email: z.string().email('Invalid email address...'),
     phone: z.string().min(1, 'Phone is required...'),
     country: z.string().min(1, 'DNI is required...'),
