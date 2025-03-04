@@ -15,4 +15,6 @@ const asyncHandler = (fn) => (req, res, next) => {
 employeeRouter.post('/employee/new', asyncHandler(employees_controller_1.createEmployee));
 employeeRouter.get('/', employees_controller_1.getEmployees);
 employeeRouter.get('/employee/search/:id?', asyncHandler(employees_controller_1.getEmployeeByIdDni));
+employeeRouter.put('/employee/edit/:id?', asyncHandler(employees_controller_1.updateEmployee));
+employeeRouter.delete('/employee/delete/:id?', asyncHandler(employees_controller_1.deleteEmployee));
 //# sourceMappingURL=employee.routes.js.map

@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 import Employee from '../../models/employees/Employee';
 import { EmployeeSchema } from '../../validations/schemas/employeeSchema/employeeSchema';
 import { convertToMySQLDate } from '../../utils/DateFormatter';
-import { error } from 'console';
+import { buildEmployeeWhereClause } from '../../helpers/employee.helper';
 
 // ~ Se crea un nuevo empleado...
 export const createEmployee = async (
@@ -104,28 +104,23 @@ export const getEmployeeByIdDni = async (
     res: Response,
 ) => {
     try {
-        const { id } = req.params;
-        const { dni } = req.query;
+        const whereClause = buildEmployeeWhereClause(req);
 
-        let employee;
-
-        if (id) {
-            employee = await Employee.findByPk(id);
-        } else if (dni) {
-            employee = await Employee.findOne({
-                where: { dni: dni as string }, // > Asegurarse que el dni sea tratado como string...
-            });
-        } else {
+        if (!whereClause) {
             return res.status(400).json({
                 error: 'You must provide either an id or a dni',
             });
         }
 
+        const employee = await Employee.findOne({
+            where: whereClause,
+        });
+
         if (employee) {
             res.status(200).json(employee);
         } else {
             res.status(404).json({
-                error: 'Employee not found',
+                error: 'Employee not found...!',
             });
         }
     } catch (error: any) {
@@ -138,16 +133,68 @@ export const updateEmployee = async (
     res: Response,
 ) => {
     try {
-        // const { dni } = req.query;
-        // const employeeFound = await Employee.findOne({
-        //     where: { dni: dni as string },
-        // });
-        // if (!employeeFound) {
-        //     res.status(404).json({
-        //         error: `Employee with Dni: ${dni} not found...!`,
-        //     });
-        // }
-    } catch (error) {
-        //
+        const whereClause = buildEmployeeWhereClause(req);
+
+        if (!whereClause) {
+            return res.status(400).json({
+                error: 'You must provide either an id or a dni',
+            });
+        }
+
+        const validatedData = EmployeeSchema.parse(
+            req.body,
+        ); // > Valida los datos de entrada...
+
+        const [updated] = await Employee.update(
+            validatedData,
+            {
+                where: whereClause,
+            },
+        );
+
+        if (updated) {
+            const updatedEmployee = await Employee.findOne({
+                where: whereClause,
+            });
+
+            res.status(200).json(updatedEmployee);
+        } else {
+            res.status(404).json({
+                error: 'Employee not found',
+            });
+        }
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+export const deleteEmployee = async (
+    req: Request,
+    res: Response,
+) => {
+    try {
+        const whereClause = buildEmployeeWhereClause(req);
+
+        if (!whereClause) {
+            return res.status(400).json({
+                error: 'You must provide either an id or a dni',
+            });
+        }
+
+        const deleted = await Employee.destroy({
+            where: whereClause,
+        });
+
+        if (deleted) {
+            res.status(200).json({
+                message: 'Employee has been deleted...!!!',
+            });
+        } else {
+            res.status(404).json({
+                message: 'Employee not found...!',
+            });
+        }
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
     }
 };
