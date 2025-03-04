@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Employee from '../../models/employees/Employee';
 import { EmployeeSchema } from '../../validations/schemas/employeeSchema/employeeSchema';
 import { convertToMySQLDate } from '../../utils/DateFormatter';
+import { error } from 'console';
 
 // ~ Se crea un nuevo empleado...
 export const createEmployee = async (
@@ -9,19 +10,6 @@ export const createEmployee = async (
     res: Response,
 ) => {
     try {
-        // const {
-        //     dni,
-        //     name,
-        //     lastName,
-        //     birthDate,
-        //     email,
-        //     phone,
-        //     country,
-        //     // ? statusWork,
-        //     // ? department,
-        //     // ? position,
-        // } = req.body;
-
         // * Validación de datos...
         const validatedData = EmployeeSchema.parse(
             req.body,
@@ -83,5 +71,83 @@ export const createEmployee = async (
                     'Error desconocido',
             });
         }
+    }
+};
+
+export const getEmployees = async (
+    req: Request,
+    res: Response,
+) => {
+    try {
+        const employees = await Employee.findAll({
+            attributes: [
+                'dni',
+                'name',
+                'lastName',
+                'email',
+                'phone',
+            ],
+        });
+
+        res.status(200).json(employees);
+    } catch (error) {
+        res.status(500).json({
+            error: 'Error interno del servidor',
+            details:
+                error?.toString() || 'Error desconocido',
+        });
+    }
+};
+
+export const getEmployeeByIdDni = async (
+    req: Request,
+    res: Response,
+) => {
+    try {
+        const { id } = req.params;
+        const { dni } = req.query;
+
+        let employee;
+
+        if (id) {
+            employee = await Employee.findByPk(id);
+        } else if (dni) {
+            employee = await Employee.findOne({
+                where: { dni: dni as string }, // > Asegurarse que el dni sea tratado como string...
+            });
+        } else {
+            return res.status(400).json({
+                error: 'You must provide either an id or a dni',
+            });
+        }
+
+        if (employee) {
+            res.status(200).json(employee);
+        } else {
+            res.status(404).json({
+                error: 'Employee not found',
+            });
+        }
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+export const updateEmployee = async (
+    req: Request,
+    res: Response,
+) => {
+    try {
+        // const { dni } = req.query;
+        // const employeeFound = await Employee.findOne({
+        //     where: { dni: dni as string },
+        // });
+        // if (!employeeFound) {
+        //     res.status(404).json({
+        //         error: `Employee with Dni: ${dni} not found...!`,
+        //     });
+        // }
+    } catch (error) {
+        //
     }
 };

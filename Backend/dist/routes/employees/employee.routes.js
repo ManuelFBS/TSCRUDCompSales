@@ -13,4 +13,6 @@ const asyncHandler = (fn) => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
 };
 employeeRouter.post('/employee/new', asyncHandler(employees_controller_1.createEmployee));
+employeeRouter.get('/', employees_controller_1.getEmployees);
+employeeRouter.get('/employee/search/:id?', asyncHandler(employees_controller_1.getEmployeeByIdDni));
 //# sourceMappingURL=employee.routes.js.map

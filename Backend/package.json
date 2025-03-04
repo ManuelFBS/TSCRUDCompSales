@@ -6,7 +6,7 @@
         "format": "prettier --write.",
         "dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
         "build": "tsc && xcopy /E /I src\\public dist\\public && xcopy /E /I src\\views dist\\views",
-        "start": "nodemon dist/index.js",
+        "start": "node dist/index.js",
         "clean": "rimraf dist"
     },
     "keywords": [],

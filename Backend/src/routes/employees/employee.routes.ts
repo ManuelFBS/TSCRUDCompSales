@@ -1,5 +1,9 @@
 import express from 'express';
-import { createEmployee } from '../../controllers/Employees/employees.controller';
+import {
+    createEmployee,
+    getEmployees,
+    getEmployeeByIdDni,
+} from '../../controllers/Employees/employees.controller';
 
 const employeeRouter = express.Router();
 
@@ -12,6 +16,13 @@ const asyncHandler =
 employeeRouter.post(
     '/employee/new',
     asyncHandler(createEmployee),
+);
+
+employeeRouter.get('/', getEmployees);
+
+employeeRouter.get(
+    '/employee/search/:id?',
+    asyncHandler(getEmployeeByIdDni),
 );
 
 export { employeeRouter };
