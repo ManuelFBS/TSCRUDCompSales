@@ -6,4 +6,5 @@ export const UserSchema = z.object({
     user: z.string().min(5, 'User is required...'),
     password: z.string().min(6, 'Password is required...'),
     role: z.enum(['Owner', 'Admin', 'Employee']),
+    status: z.enum(['Activo', 'Bloqueado']),
 });

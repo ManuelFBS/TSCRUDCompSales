@@ -1,0 +1,23 @@
+import { Request } from 'express';
+import { WhereOptions } from 'sequelize';
+
+/*
+   + Se construye el objeto `whereClause` para buscar un empleado por id o dni...
+   + @param req - El objeto Request de Express...
+   + @returns Un objeto con la condición de búsqueda o null si no se proporciona ni id ni user...
+ */
+
+export const buildUserWhereClause = (
+    req: Request,
+): WhereOptions | null => {
+    const { id } = req.params; // > Se obtiene el id de los parámetros de la ruta...
+    const { user } = req.query; // > Se obtiene el user de los query parameters...
+
+    if (id) {
+        return { id }; // > Buscar por id...
+    } else if (user) {
+        return { user: user as string }; // > Buscar por user...
+    } else {
+        return null;
+    }
+};
