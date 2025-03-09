@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserByIdUser = exports.getUsers = exports.createUser = void 0;
+exports.updateUser = exports.getUserByIdUser = exports.getUsers = exports.createUser = void 0;
 const userSchema_1 = require("../../validations/schemas/userSchema/userSchema");
 const models_1 = __importDefault(require("../../models"));
 const user_helper_1 = require("../../helpers/user.helper");
@@ -67,14 +67,14 @@ const getUserByIdUser = (req, res) => __awaiter(void 0, void 0, void 0, function
             where: whereClause,
         });
         if (user) {
-            // const userEssentialData = {
-            //     DNI: user.dni,
-            //     Usuario: user.user,
-            //     Rol: user.role,
-            //     // Status: user.status,
-            // };
-            res.status(200).json(user);
-            // res.status(200).json(userEssentialData);
+            const userEssentialData = {
+                DNI: user.dni,
+                Usuario: user.user,
+                Rol: user.role,
+                Status: user.status,
+            };
+            // res.status(200).json(user);
+            res.status(200).json(userEssentialData);
         }
         else {
             res.status(404).json({
@@ -87,4 +87,6 @@ const getUserByIdUser = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.getUserByIdUser = getUserByIdUser;
+const updateUser = () => __awaiter(void 0, void 0, void 0, function* () { });
+exports.updateUser = updateUser;
 //# sourceMappingURL=users.controller.js.map

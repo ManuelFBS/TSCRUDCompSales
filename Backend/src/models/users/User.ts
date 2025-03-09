@@ -7,6 +7,7 @@ class User extends Model {
     public user!: string;
     public password!: string;
     public role!: string;
+    public status!: string;
 }
 
 User.init(

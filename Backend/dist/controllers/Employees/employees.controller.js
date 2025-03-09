@@ -13,10 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteEmployee = exports.updateEmployee = exports.getEmployeeByIdDni = exports.getEmployees = exports.createEmployee = void 0;
-const Employee_1 = __importDefault(require("../../models/employees/Employee"));
 const employeeSchema_1 = require("../../validations/schemas/employeeSchema/employeeSchema");
 const DateFormatter_1 = require("../../utils/DateFormatter");
 const employee_helper_1 = require("../../helpers/employee.helper");
+const models_1 = __importDefault(require("../../models"));
+const { Employee, Department, EmployeeStatus } = models_1.default;
 // ~ Se crea un nuevo empleado...
 const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -31,7 +32,7 @@ const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 message: 'Por favor, use el formato DD/MM/YYYY',
             });
         }
-        const newEmployee = yield Employee_1.default.create({
+        const newEmployee = yield Employee.create({
             dni: validatedData.dni,
             name: validatedData.name,
             lastName: validatedData.lastName,
@@ -39,6 +40,17 @@ const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
             email: validatedData.email,
             phone: validatedData.phone,
             country: validatedData.country,
+        });
+        // * Crear registro en Department...
+        const dept = yield Department.create({
+            dni: newEmployee.dni,
+            department: req.body.department,
+            position: req.body.position,
+        });
+        // * Crear registro en EmployeeStatus...
+        const statusEmp = yield EmployeeStatus.create({
+            dni: newEmployee.dni,
+            statusWork: 'Activo',
         });
         res.status(201).json({
             message: 'Employee created successfully...!!!',
@@ -51,9 +63,9 @@ const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
             Email: newEmployee.email,
             Telefono: newEmployee.phone,
             Pais: newEmployee.country,
-            // ? EstadoLaboral: statusWork,
-            // ? Departamento: department,
-            // ? Cargo: position,
+            EstadoLaboral: statusEmp.statusWork,
+            Departamento: dept.department,
+            Cargo: dept.position,
         });
     }
     catch (error) {
@@ -78,7 +90,7 @@ const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.createEmployee = createEmployee;
 const getEmployees = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const employees = yield Employee_1.default.findAll({
+        const employees = yield Employee.findAll({
             attributes: [
                 'dni',
                 'name',
@@ -105,7 +117,7 @@ const getEmployeeByIdDni = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 error: 'You must provide either an id or a dni',
             });
         }
-        const employee = yield Employee_1.default.findOne({
+        const employee = yield Employee.findOne({
             where: whereClause,
         });
         if (employee) {
@@ -131,11 +143,11 @@ const updateEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
             });
         }
         const validatedData = employeeSchema_1.EmployeeSchema.parse(req.body); // > Valida los datos de entrada...
-        const [updated] = yield Employee_1.default.update(validatedData, {
+        const [updated] = yield Employee.update(validatedData, {
             where: whereClause,
         });
         if (updated) {
-            const updatedEmployee = yield Employee_1.default.findOne({
+            const updatedEmployee = yield Employee.findOne({
                 where: whereClause,
             });
             res.status(200).json(updatedEmployee);
@@ -159,7 +171,7 @@ const deleteEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 error: 'You must provide either an id or a dni',
             });
         }
-        const deleted = yield Employee_1.default.destroy({
+        const deleted = yield Employee.destroy({
             where: whereClause,
         });
         if (deleted) {

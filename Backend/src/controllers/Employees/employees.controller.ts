@@ -1,8 +1,10 @@
-import e, { Request, Response } from 'express';
-import Employee from '../../models/employees/Employee';
+import { Request, Response } from 'express';
 import { EmployeeSchema } from '../../validations/schemas/employeeSchema/employeeSchema';
 import { convertToMySQLDate } from '../../utils/DateFormatter';
 import { buildEmployeeWhereClause } from '../../helpers/employee.helper';
+import models from '../../models';
+
+const { Employee, Department, EmployeeStatus } = models;
 
 // ~ Se crea un nuevo empleado...
 export const createEmployee = async (
@@ -39,6 +41,19 @@ export const createEmployee = async (
             country: validatedData.country,
         });
 
+        // * Crear registro en Department...
+        const dept = await Department.create({
+            dni: newEmployee.dni,
+            department: req.body.department,
+            position: req.body.position,
+        });
+
+        // * Crear registro en EmployeeStatus...
+        const statusEmp = await EmployeeStatus.create({
+            dni: newEmployee.dni,
+            statusWork: 'Activo',
+        });
+
         res.status(201).json({
             message: 'Employee created successfully...!!!',
             ID: newEmployee.id,
@@ -50,9 +65,9 @@ export const createEmployee = async (
             Email: newEmployee.email,
             Telefono: newEmployee.phone,
             Pais: newEmployee.country,
-            // ? EstadoLaboral: statusWork,
-            // ? Departamento: department,
-            // ? Cargo: position,
+            EstadoLaboral: statusEmp.statusWork,
+            Departamento: dept.department,
+            Cargo: dept.position,
         });
     } catch (error: any) {
         // * Manejo de errores específicos
