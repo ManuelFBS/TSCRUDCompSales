@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 import syncDatabase from './config/synchronicityDB';
 import cors from 'cors';
 import morgan from 'morgan';
-import { employeeRouter } from './routes/index';
+import { employeeRouter, userRouter } from './routes/index';
 
 const app: Application = express();
 
@@ -50,10 +50,10 @@ app.get('/api', (req: Request, res: Response) => {
 // * Routes...
 // app.use('/api/auth', logRouter);
 app.use('/api/employees', employeeRouter);
-// app.use(
-//     '/api/users',
-//     asyncHandler(authMiddleware),
-//     userRouter,
-// );
+app.use(
+    '/api/users',
+    // asyncHandler(authMiddleware),
+    userRouter,
+);
 
 export default app;

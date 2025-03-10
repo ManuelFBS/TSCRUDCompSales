@@ -26,7 +26,14 @@ export const createUser = async (
         // * Se crea el usuario...
         const user = await User.create(validatedData);
 
-        res.status(201).json(user);
+        res.status(201).json({
+            message:
+                'New User has been created successfully...!!!',
+            DNI: user.dni,
+            Usuario: user.user,
+            Rol: user.role,
+            Status: user.status,
+        });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }
@@ -37,14 +44,15 @@ export const getUsers = async (
     res: Response,
 ) => {
     try {
-        const users = await User.findAll({
-            include: [
-                {
-                    model: Employee,
-                    as: 'employee',
-                },
-            ],
-        });
+        // const users = await User.findAll({
+        //     include: [
+        //         {
+        //             model: Employee,
+        //             as: 'employee',
+        //         },
+        //     ],
+        // });
+        const users = await User.findAll();
 
         res.status(200).json(users);
     } catch (error: any) {

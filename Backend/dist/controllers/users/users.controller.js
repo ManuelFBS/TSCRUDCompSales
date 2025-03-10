@@ -31,7 +31,13 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
         // * Se crea el usuario...
         const user = yield User.create(validatedData);
-        res.status(201).json(user);
+        res.status(201).json({
+            message: 'New User has been created successfully...!!!',
+            DNI: user.dni,
+            Usuario: user.user,
+            Rol: user.role,
+            Status: user.status,
+        });
     }
     catch (error) {
         res.status(500).json({ error: error.message });
@@ -40,14 +46,15 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.createUser = createUser;
 const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const users = yield User.findAll({
-            include: [
-                {
-                    model: Employee,
-                    as: 'employee',
-                },
-            ],
-        });
+        // const users = await User.findAll({
+        //     include: [
+        //         {
+        //             model: Employee,
+        //             as: 'employee',
+        //         },
+        //     ],
+        // });
+        const users = yield User.findAll();
         res.status(200).json(users);
     }
     catch (error) {
