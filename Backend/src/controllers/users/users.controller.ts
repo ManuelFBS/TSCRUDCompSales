@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { UserSchema } from '../../validations/schemas/userSchema/userSchema';
 import models from '../../models';
+import { HashPassword } from '../../utils/authUtils';
 import { buildUserWhereClause } from '../../helpers/user.helper';
+import { isAwaitKeyword } from 'typescript';
 
 const { User, Employee } = models;
 
@@ -22,6 +24,13 @@ export const createUser = async (
                 error: 'Employee not found...!',
             });
         }
+
+        // * Se procede a encriptar el password...
+        const hashedPassword = await HashPassword(
+            validatedData.password,
+        );
+        //
+        validatedData.password = hashedPassword;
 
         // * Se crea el usuario...
         const user = await User.create(validatedData);
@@ -44,15 +53,9 @@ export const getUsers = async (
     res: Response,
 ) => {
     try {
-        // const users = await User.findAll({
-        //     include: [
-        //         {
-        //             model: Employee,
-        //             as: 'employee',
-        //         },
-        //     ],
-        // });
-        const users = await User.findAll();
+        const users = await User.findAll({
+            attributes: ['id', 'dni', 'user', 'role'],
+        });
 
         res.status(200).json(users);
     } catch (error: any) {
@@ -60,7 +63,7 @@ export const getUsers = async (
     }
 };
 
-export const getUserByIdUser = async (
+export const getUserByIdDniUser = async (
     req: Request,
     res: Response,
 ) => {
@@ -79,12 +82,13 @@ export const getUserByIdUser = async (
 
         if (user) {
             const userEssentialData = {
+                ID: user.id,
                 DNI: user.dni,
                 Usuario: user.user,
                 Rol: user.role,
                 Status: user.status,
             };
-            // res.status(200).json(user);
+
             res.status(200).json(userEssentialData);
         } else {
             res.status(404).json({
@@ -96,4 +100,24 @@ export const getUserByIdUser = async (
     }
 };
 
-export const updateUser = async () => {};
+export const updateUser = async (
+    req: Request,
+    res: Response,
+) => {
+    const validatedData = UserSchema.parse(req.body);
+
+    // * Si se proporciona una nueva contraseña, encriptarla...
+    if (validatedData.password) {
+        validatedData.password = await HashPassword(
+            validatedData.password,
+        );
+    }
+
+    const [updated] = await User.update(validatedData, {
+        where: { id: req.params.id },
+    });
+
+    // if (updated) {
+    //     const updatedUser = await User.findByPk;
+    // }
+};

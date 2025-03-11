@@ -2,7 +2,7 @@ import express from 'express';
 import {
     createUser,
     getUsers,
-    getUserByIdUser,
+    getUserByIdDniUser,
 } from '../../controllers/Users/users.controller';
 
 const userRouter = express.Router();
@@ -16,5 +16,10 @@ const asyncHandler =
 userRouter.post('/user/new', asyncHandler(createUser));
 
 userRouter.get('/', getUsers);
+
+userRouter.get(
+    '/user/search/:id?',
+    asyncHandler(getUserByIdDniUser),
+);
 
 export { userRouter };

@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.getUserByIdUser = exports.getUsers = exports.createUser = void 0;
+exports.updateUser = exports.getUserByIdDniUser = exports.getUsers = exports.createUser = void 0;
 const userSchema_1 = require("../../validations/schemas/userSchema/userSchema");
 const models_1 = __importDefault(require("../../models"));
+const authUtils_1 = require("../../utils/authUtils");
 const user_helper_1 = require("../../helpers/user.helper");
 const { User, Employee } = models_1.default;
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -29,6 +30,10 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 error: 'Employee not found...!',
             });
         }
+        // * Se procede a encriptar el password...
+        const hashedPassword = yield (0, authUtils_1.HashPassword)(validatedData.password);
+        //
+        validatedData.password = hashedPassword;
         // * Se crea el usuario...
         const user = yield User.create(validatedData);
         res.status(201).json({
@@ -46,15 +51,9 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.createUser = createUser;
 const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // const users = await User.findAll({
-        //     include: [
-        //         {
-        //             model: Employee,
-        //             as: 'employee',
-        //         },
-        //     ],
-        // });
-        const users = yield User.findAll();
+        const users = yield User.findAll({
+            attributes: ['id', 'dni', 'user', 'role'],
+        });
         res.status(200).json(users);
     }
     catch (error) {
@@ -62,7 +61,7 @@ const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getUsers = getUsers;
-const getUserByIdUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getUserByIdDniUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const whereClause = (0, user_helper_1.buildUserWhereClause)(req);
         if (!whereClause) {
@@ -75,12 +74,12 @@ const getUserByIdUser = (req, res) => __awaiter(void 0, void 0, void 0, function
         });
         if (user) {
             const userEssentialData = {
+                ID: user.id,
                 DNI: user.dni,
                 Usuario: user.user,
                 Rol: user.role,
                 Status: user.status,
             };
-            // res.status(200).json(user);
             res.status(200).json(userEssentialData);
         }
         else {
@@ -93,7 +92,19 @@ const getUserByIdUser = (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(500).json({ error: error.message });
     }
 });
-exports.getUserByIdUser = getUserByIdUser;
-const updateUser = () => __awaiter(void 0, void 0, void 0, function* () { });
+exports.getUserByIdDniUser = getUserByIdDniUser;
+const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const validatedData = userSchema_1.UserSchema.parse(req.body);
+    // * Si se proporciona una nueva contraseña, encriptarla...
+    if (validatedData.password) {
+        validatedData.password = yield (0, authUtils_1.HashPassword)(validatedData.password);
+    }
+    const [updated] = yield User.update(validatedData, {
+        where: { id: req.params.id },
+    });
+    if (updated) {
+        const updatedUser = yield User.findByPk;
+    }
+});
 exports.updateUser = updateUser;
 //# sourceMappingURL=users.controller.js.map
