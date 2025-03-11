@@ -15,4 +15,6 @@ const asyncHandler = (fn) => (req, res, next) => {
 userRouter.post('/user/new', asyncHandler(users_controller_1.createUser));
 userRouter.get('/', users_controller_1.getUsers);
 userRouter.get('/user/search/:id?', asyncHandler(users_controller_1.getUserByIdDniUser));
+userRouter.patch('/user/edit/:id', users_controller_1.updateUser);
+userRouter.delete('/user/delete/:id?', users_controller_1.deleteUser);
 //# sourceMappingURL=user.routes.js.map

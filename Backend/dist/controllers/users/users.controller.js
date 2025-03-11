@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.getUserByIdDniUser = exports.getUsers = exports.createUser = void 0;
+exports.deleteUser = exports.updateUser = exports.getUserByIdDniUser = exports.getUsers = exports.createUser = void 0;
 const userSchema_1 = require("../../validations/schemas/userSchema/userSchema");
 const models_1 = __importDefault(require("../../models"));
 const authUtils_1 = require("../../utils/authUtils");
@@ -71,16 +71,78 @@ const getUserByIdDniUser = (req, res) => __awaiter(void 0, void 0, void 0, funct
         }
         const user = yield User.findOne({
             where: whereClause,
+            include: [
+                {
+                    model: Employee,
+                    as: 'employee',
+                    attributes: [
+                        'name',
+                        'lastName',
+                        'email',
+                        'phone',
+                    ],
+                },
+            ],
         });
         if (user) {
-            const userEssentialData = {
-                ID: user.id,
-                DNI: user.dni,
-                Usuario: user.user,
-                Rol: user.role,
-                Status: user.status,
-            };
-            res.status(200).json(userEssentialData);
+            res.status(200).json(user);
+        }
+        else {
+            res.status(404).json({
+                error: 'User not found...!',
+            });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+exports.getUserByIdDniUser = getUserByIdDniUser;
+const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const validatedData = userSchema_1.UserSchema.parse(req.body);
+        // * Si se proporciona una nueva contraseña, encriptarla...
+        if (validatedData.password) {
+            validatedData.password = yield (0, authUtils_1.HashPassword)(validatedData.password);
+        }
+        const [updated] = yield User.update(validatedData, {
+            where: { id: req.params.id },
+        });
+        if (updated) {
+            const updatedUser = yield User.findByPk(req.params.id, {
+                include: [
+                    {
+                        model: Employee,
+                        as: 'employee',
+                        attributes: [
+                            'name',
+                            'lastName',
+                            'email',
+                        ],
+                    },
+                ],
+            });
+            res.status(200).json(updatedUser);
+        }
+        else {
+            res.status(404).json({
+                error: 'User not found',
+            });
+        }
+    }
+    catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+exports.updateUser = updateUser;
+const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const whereClause = (0, user_helper_1.buildUserWhereClause)(req);
+    try {
+        const deleted = yield User.destroy({
+            where: { whereClause },
+        });
+        if (deleted) {
+            res.status(204).send();
         }
         else {
             res.status(404).json({
@@ -92,19 +154,5 @@ const getUserByIdDniUser = (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(500).json({ error: error.message });
     }
 });
-exports.getUserByIdDniUser = getUserByIdDniUser;
-const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const validatedData = userSchema_1.UserSchema.parse(req.body);
-    // * Si se proporciona una nueva contraseña, encriptarla...
-    if (validatedData.password) {
-        validatedData.password = yield (0, authUtils_1.HashPassword)(validatedData.password);
-    }
-    const [updated] = yield User.update(validatedData, {
-        where: { id: req.params.id },
-    });
-    if (updated) {
-        const updatedUser = yield User.findByPk;
-    }
-});
-exports.updateUser = updateUser;
+exports.deleteUser = deleteUser;
 //# sourceMappingURL=users.controller.js.map

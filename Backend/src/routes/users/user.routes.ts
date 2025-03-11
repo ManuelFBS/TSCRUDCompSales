@@ -3,6 +3,8 @@ import {
     createUser,
     getUsers,
     getUserByIdDniUser,
+    updateUser,
+    deleteUser,
 } from '../../controllers/Users/users.controller';
 
 const userRouter = express.Router();
@@ -21,5 +23,9 @@ userRouter.get(
     '/user/search/:id?',
     asyncHandler(getUserByIdDniUser),
 );
+
+userRouter.patch('/user/edit/:id', updateUser);
+
+userRouter.delete('/user/delete/:id?', deleteUser);
 
 export { userRouter };
