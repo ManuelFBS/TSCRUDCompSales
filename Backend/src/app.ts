@@ -4,20 +4,34 @@ import express, {
     Response,
 } from 'express';
 import cookieParser from 'cookie-parser';
+import csrf from 'csrf';
 import dotenv from 'dotenv';
 import syncDatabase from './config/synchronicityDB';
 import cors from 'cors';
 import morgan from 'morgan';
 import { employeeRouter, userRouter } from './routes/index';
+// ? import authRoutes from './routes/authRoutes';
+import { JWT_SECRET } from './config/auth';
 
 const app: Application = express();
 
 dotenv.config();
 
-// * Settings...
+// ~ Settings...
 app.set('port', process.env.PORT || 8585 || 3070);
 
-// * Middlewares...
+// ~  Configuración de CSRF...
+const csrfProtection = new csrf();
+
+// ~ Middlewares...
+app.use((req, res, next) => {
+    const csrfToken = csrfProtection.create(JWT_SECRET);
+
+    res.cookie('XSRF-TOKEN', csrfToken, { httpOnly: true });
+    res.locals.csrfToken = csrfToken;
+    next();
+}); // > Middleware para generar tokens CSRF
+//
 app.use(cookieParser());
 app.use(morgan('dev'));
 app.use(cors());
