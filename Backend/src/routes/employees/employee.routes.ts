@@ -1,5 +1,9 @@
 import express from 'express';
 import {
+    authenticate,
+    authorize,
+} from '../../middlewares/authMiddleware';
+import {
     createEmployee,
     getEmployees,
     getEmployeeByIdDni,
@@ -15,25 +19,36 @@ const asyncHandler =
         Promise.resolve(fn(req, res, next)).catch(next);
     };
 
+// ~ Proteger todas las rutas de empleados...
+employeeRouter.use(asyncHandler(authenticate));
+
 employeeRouter.post(
     '/employee/new',
+    asyncHandler(authorize(['Owner'])),
     asyncHandler(createEmployee),
 );
 
-employeeRouter.get('/', getEmployees);
+employeeRouter.get(
+    '/',
+    asyncHandler(authorize(['Owner', 'Admin'])),
+    getEmployees,
+);
 
 employeeRouter.get(
     '/employee/search/:id?',
+    asyncHandler(authorize(['Owner', 'Admin'])),
     asyncHandler(getEmployeeByIdDni),
 );
 
 employeeRouter.put(
     '/employee/edit/:id?',
+    asyncHandler(authorize(['Owner'])),
     asyncHandler(updateEmployee),
 );
 
 employeeRouter.delete(
     '/employee/delete/:id?',
+    asyncHandler(authorize(['Owner'])),
     asyncHandler(deleteEmployee),
 );
 

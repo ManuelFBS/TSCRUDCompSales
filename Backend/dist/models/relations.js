@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Department = exports.EmployeeStatus = exports.User = exports.Employee = void 0;
+exports.BlacklistedToken = exports.Department = exports.EmployeeStatus = exports.User = exports.Employee = void 0;
 const Employee_1 = __importDefault(require("./employees/Employee"));
 exports.Employee = Employee_1.default;
 const User_1 = __importDefault(require("./users/User"));
@@ -12,6 +12,8 @@ const EmployeeStatus_1 = __importDefault(require("./employees/EmployeeStatus"));
 exports.EmployeeStatus = EmployeeStatus_1.default;
 const Department_1 = __importDefault(require("./employees/Department"));
 exports.Department = Department_1.default;
+const BlacklistedToken_1 = __importDefault(require("./tokens/BlacklistedToken"));
+exports.BlacklistedToken = BlacklistedToken_1.default;
 // ~ Relación Employee - User...
 Employee_1.default.hasOne(User_1.default, {
     foreignKey: 'dni',

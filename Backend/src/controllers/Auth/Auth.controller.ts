@@ -6,10 +6,8 @@ import {
     JWT_SECRET,
     JWT_EXPIRES_IN,
 } from '../../config/auth';
-import { error } from 'console';
-import { stat } from 'fs';
 
-const { User } = models;
+const { BlacklistedToken, User } = models;
 
 export const login = async (
     req: Request,
@@ -65,6 +63,19 @@ export const logout = async (
     res: Response,
 ) => {
     try {
+        const token = req
+            .header('Authorization')
+            ?.replace('Bearer ', '');
+
+        if (!token) {
+            return res
+                .status(400)
+                .json({ error: 'No token provided' });
+        }
+
+        // * Agregar el token a la lista negra...
+        await BlacklistedToken.create({ token });
+
         res.status(200).json({
             message: 'Logged out successfully',
         });

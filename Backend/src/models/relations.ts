@@ -2,6 +2,7 @@ import Employee from './employees/Employee';
 import User from './users/User';
 import EmployeeStatus from './employees/EmployeeStatus';
 import Department from './employees/Department';
+import BlacklistedToken from './tokens/BlacklistedToken';
 
 // ~ Relación Employee - User...
 Employee.hasOne(User, {
@@ -39,4 +40,10 @@ Department.belongsTo(Employee, {
     as: 'employee',
 });
 
-export { Employee, User, EmployeeStatus, Department };
+export {
+    Employee,
+    User,
+    EmployeeStatus,
+    Department,
+    BlacklistedToken,
+};

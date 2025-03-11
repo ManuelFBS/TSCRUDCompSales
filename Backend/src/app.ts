@@ -9,8 +9,11 @@ import dotenv from 'dotenv';
 import syncDatabase from './config/synchronicityDB';
 import cors from 'cors';
 import morgan from 'morgan';
-import { employeeRouter, userRouter } from './routes/index';
-// ? import authRoutes from './routes/authRoutes';
+import {
+    authRouter,
+    employeeRouter,
+    userRouter,
+} from './routes/index';
 import { JWT_SECRET } from './config/auth';
 
 const app: Application = express();
@@ -62,7 +65,7 @@ app.get('/api', (req: Request, res: Response) => {
 });
 
 // * Routes...
-// app.use('/api/auth', logRouter);
+app.use('/api/auth', authRouter);
 app.use('/api/employees', employeeRouter);
 app.use(
     '/api/users',

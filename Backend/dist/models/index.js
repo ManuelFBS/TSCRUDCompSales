@@ -17,6 +17,7 @@ const models = {
     User: relations_1.User,
     EmployeeStatus: relations_1.EmployeeStatus,
     Department: relations_1.Department,
+    BlacklistedToken: relations_1.BlacklistedToken,
     sequelize,
 };
 exports.default = models;
