@@ -9,7 +9,7 @@ const {
     Supplier,
 } = models;
 
-export const createPurchase = async (
+export const registerPurchase = async (
     req: Request,
     res: Response,
 ) => {
