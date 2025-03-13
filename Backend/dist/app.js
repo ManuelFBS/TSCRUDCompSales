@@ -65,5 +65,6 @@ app.use('/api/employees', index_1.employeeRouter);
 app.use('/api/users', 
 // asyncHandler(authMiddleware),
 index_1.userRouter);
+app.use('/api/suppliers', index_1.supplierRouter);
 exports.default = app;
 //# sourceMappingURL=app.js.map

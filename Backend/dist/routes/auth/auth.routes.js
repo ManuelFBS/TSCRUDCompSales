@@ -13,5 +13,5 @@ const asyncHandler = (fn) => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
 };
 authRouter.post('/login', asyncHandler(Auth_controller_1.login));
-authRouter.post('/logout', Auth_controller_1.logout);
+authRouter.post('/logout', asyncHandler(Auth_controller_1.logout));
 //# sourceMappingURL=auth.routes.js.map

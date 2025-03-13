@@ -13,6 +13,7 @@ import {
     authRouter,
     employeeRouter,
     userRouter,
+    supplierRouter,
 } from './routes/index';
 import { JWT_SECRET } from './config/auth';
 
@@ -72,5 +73,6 @@ app.use(
     // asyncHandler(authMiddleware),
     userRouter,
 );
+app.use('/api/suppliers', supplierRouter);
 
 export default app;

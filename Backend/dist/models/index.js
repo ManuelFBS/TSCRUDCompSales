@@ -17,6 +17,13 @@ const models = {
     User: relations_1.User,
     EmployeeStatus: relations_1.EmployeeStatus,
     Department: relations_1.Department,
+    ProductInventory: relations_1.ProductInventory,
+    Sales: relations_1.Sales,
+    Customer: relations_1.Customer,
+    SalesDetail: relations_1.SalesDetail,
+    Purchases: relations_1.Purchases,
+    Supplier: relations_1.Supplier,
+    PurchaseDetail: relations_1.PurchaseDetail,
     BlacklistedToken: relations_1.BlacklistedToken,
     sequelize,
 };

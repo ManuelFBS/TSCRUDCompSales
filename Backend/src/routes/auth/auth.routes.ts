@@ -16,6 +16,6 @@ const asyncHandler =
 
 authRouter.post('/login', asyncHandler(login));
 
-authRouter.post('/logout', logout);
+authRouter.post('/logout', asyncHandler(logout));
 
 export { authRouter };
