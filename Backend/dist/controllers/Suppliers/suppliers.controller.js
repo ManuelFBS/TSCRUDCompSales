@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerSupplier = void 0;
+exports.getSuppliers = exports.registerSupplier = void 0;
 const models_1 = __importDefault(require("../../models"));
 const db_1 = __importDefault(require("../../config/db"));
 const { Supplier } = models_1.default;
@@ -42,4 +42,25 @@ const registerSupplier = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.registerSupplier = registerSupplier;
+const getSuppliers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const suppliers = yield Supplier.findAll({
+            attributes: [
+                'rif',
+                'companyName',
+                'address',
+                'code',
+                'country',
+            ],
+        });
+        res.status(200).json(suppliers);
+    }
+    catch (error) {
+        res.status(500).json({
+            error: 'Error interno del servidor',
+            details: (error === null || error === void 0 ? void 0 : error.toString()) || 'Error desconocido',
+        });
+    }
+});
+exports.getSuppliers = getSuppliers;
 //# sourceMappingURL=suppliers.controller.js.map

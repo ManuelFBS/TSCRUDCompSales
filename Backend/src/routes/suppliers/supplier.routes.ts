@@ -3,7 +3,10 @@ import {
     authenticate,
     authorize,
 } from '../../middlewares/authMiddleware';
-import { registerSupplier } from '../../controllers/Suppliers/suppliers.controller';
+import {
+    registerSupplier,
+    getSuppliers,
+} from '../../controllers/Suppliers/suppliers.controller';
 
 const supplierRouter = express.Router();
 
@@ -20,6 +23,12 @@ supplierRouter.post(
     '/supplier/new',
     asyncHandler(authorize(['Owner'])),
     registerSupplier,
+);
+
+supplierRouter.get(
+    '/',
+    asyncHandler(authorize(['Owner', 'Admin'])),
+    getSuppliers,
 );
 
 export { supplierRouter };

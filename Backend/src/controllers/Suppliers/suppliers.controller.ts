@@ -40,3 +40,28 @@ export const registerSupplier = async (
         });
     }
 };
+
+export const getSuppliers = async (
+    req: Request,
+    res: Response,
+) => {
+    try {
+        const suppliers = await Supplier.findAll({
+            attributes: [
+                'rif',
+                'companyName',
+                'address',
+                'code',
+                'country',
+            ],
+        });
+
+        res.status(200).json(suppliers);
+    } catch (error) {
+        res.status(500).json({
+            error: 'Error interno del servidor',
+            details:
+                error?.toString() || 'Error desconocido',
+        });
+    }
+};

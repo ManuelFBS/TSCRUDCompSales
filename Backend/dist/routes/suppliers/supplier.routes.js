@@ -16,4 +16,5 @@ const asyncHandler = (fn) => (req, res, next) => {
 // ~ Proteger las rutas de Proveedores...
 supplierRouter.use(asyncHandler(authMiddleware_1.authenticate));
 supplierRouter.post('/supplier/new', asyncHandler((0, authMiddleware_1.authorize)(['Owner'])), suppliers_controller_1.registerSupplier);
+supplierRouter.get('/', asyncHandler((0, authMiddleware_1.authorize)(['Owner', 'Admin'])), suppliers_controller_1.getSuppliers);
 //# sourceMappingURL=supplier.routes.js.map
