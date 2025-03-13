@@ -65,6 +65,26 @@ PurchaseDetail.belongsTo(ProductInventory, {
     foreignKey: 'purchasesId',
 });
 
+// ~ Relación entre User y Sales...
+User.hasMany(Sales, {
+    foreignKey: 'userId',
+    as: 'sales',
+});
+Sales.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+});
+
+// ~ Relación entre User y Purchases...
+User.hasMany(Purchases, {
+    foreignKey: 'userId',
+    as: 'purchases',
+});
+Purchases.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+});
+
 export {
     Employee,
     User,
