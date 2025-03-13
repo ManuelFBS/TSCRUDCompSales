@@ -4,6 +4,9 @@ import {
     User,
     EmployeeStatus,
     Department,
+    ProductInventory,
+    Sales,
+    SalesDetail,
     BlacklistedToken,
 } from './relations';
 import dotenv from 'dotenv';
@@ -26,6 +29,9 @@ const models = {
     User,
     EmployeeStatus,
     Department,
+    ProductInventory,
+    Sales,
+    SalesDetail,
     BlacklistedToken,
     sequelize,
 };
