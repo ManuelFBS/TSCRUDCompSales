@@ -1,46 +1,44 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../../config/db';
-import User from '../users/User';
-import Customer from '../customers/Customer';
 
-class Sales extends Model {
+class Supplier extends Model {
     public id!: number;
-    public totalAmount!: number;
-    public tax!: number;
-    public saleDate!: Date;
-    public userId!: number;
+    public rif!: string;
+    public companyName!: string;
+    public address!: string;
+    public code!: string;
+    public country!: string;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
 
-Sales.init(
+Supplier.init(
     {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
-        totalAmount: {
-            type: DataTypes.DECIMAL(10, 2),
+        rif: {
+            type: DataTypes.STRING,
+            unique: true,
             allowNull: false,
         },
-        tax: {
-            type: DataTypes.DECIMAL(10, 2),
+        companyName: {
+            type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: 0,
         },
-        saleDate: {
-            type: DataTypes.DATE,
+        address: {
+            type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: DataTypes.NOW,
         },
-        userId: {
-            type: DataTypes.INTEGER,
+        code: {
+            type: DataTypes.STRING,
             allowNull: false,
-            references: {
-                model: User,
-                key: 'id',
-            },
+        },
+        country: {
+            type: DataTypes.STRING,
+            allowNull: false,
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -55,9 +53,9 @@ Sales.init(
     },
     {
         sequelize,
-        modelName: 'Sales',
-        tableName: 'sales',
+        modelName: 'Supplier',
+        tableName: 'suppliers',
     },
 );
 
-export default Sales;
+export default Supplier;

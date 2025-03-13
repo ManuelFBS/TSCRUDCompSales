@@ -6,7 +6,11 @@ import {
     Department,
     ProductInventory,
     Sales,
+    Customer,
     SalesDetail,
+    Purchases,
+    Supplier,
+    PurchaseDetail,
     BlacklistedToken,
 } from './relations';
 import dotenv from 'dotenv';
@@ -31,7 +35,11 @@ const models = {
     Department,
     ProductInventory,
     Sales,
+    Customer,
     SalesDetail,
+    Purchases,
+    Supplier,
+    PurchaseDetail,
     BlacklistedToken,
     sequelize,
 };

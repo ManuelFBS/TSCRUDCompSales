@@ -5,8 +5,10 @@ import Department from './employees/Department';
 import ProductInventory from './products/ProductInventory';
 import Sales from './sales/Sales';
 import SalesDetail from './sales/SalesDetail';
+import Customer from './customers/Customer';
 import Purchases from './purchases/Purchases';
 import PurchaseDetail from './purchases/PurchaseDetail';
+import Supplier from './suppliers/Supplier';
 import BlacklistedToken from './tokens/BlacklistedToken';
 
 // ~ Relación Employee - User...
@@ -49,6 +51,16 @@ Department.belongsTo(Employee, {
 Sales.hasMany(SalesDetail, { foreignKey: 'salesId' });
 SalesDetail.belongsTo(Sales, { foreignKey: 'salesId' });
 
+// ~ Relación entre Sales y Customer...
+Sales.belongsTo(Customer, {
+    foreignKey: 'customerId',
+    as: 'customer',
+});
+Customer.hasMany(Sales, {
+    foreignKey: 'customerId',
+    as: 'sales',
+});
+
 // ~ Relación entre ProductInventory y SalesDetail...
 ProductInventory.hasMany(SalesDetail, {
     foreignKey: 'productInventoryId',
@@ -63,6 +75,16 @@ Purchases.hasMany(PurchaseDetail, {
 });
 PurchaseDetail.belongsTo(ProductInventory, {
     foreignKey: 'purchasesId',
+});
+
+// ~ Relación entre Purchases y Supplier...
+Purchases.belongsTo(Supplier, {
+    foreignKey: 'supplierId',
+    as: 'supplier',
+});
+Supplier.hasMany(Purchases, {
+    foreignKey: 'supplierId',
+    as: 'purchases',
 });
 
 // ~ Relación entre User y Sales...
@@ -92,8 +114,10 @@ export {
     Department,
     ProductInventory,
     Sales,
+    Customer,
     SalesDetail,
     Purchases,
+    Supplier,
     PurchaseDetail,
     BlacklistedToken,
 };

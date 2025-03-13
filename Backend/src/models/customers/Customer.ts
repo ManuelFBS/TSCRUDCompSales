@@ -1,46 +1,39 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../../config/db';
-import User from '../users/User';
-import Customer from '../customers/Customer';
 
-class Sales extends Model {
+class Customer extends Model {
     public id!: number;
-    public totalAmount!: number;
-    public tax!: number;
-    public saleDate!: Date;
-    public userId!: number;
+    public dni!: string;
+    public name!: string;
+    public lastName!: string;
+    public address!: string;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
 
-Sales.init(
+Customer.init(
     {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
-        totalAmount: {
-            type: DataTypes.DECIMAL(10, 2),
+        dni: {
+            type: DataTypes.STRING,
+            unique: true,
             allowNull: false,
         },
-        tax: {
-            type: DataTypes.DECIMAL(10, 2),
+        name: {
+            type: DataTypes.STRING(50),
             allowNull: false,
-            defaultValue: 0,
         },
-        saleDate: {
-            type: DataTypes.DATE,
+        lastName: {
+            type: DataTypes.STRING(50),
             allowNull: false,
-            defaultValue: DataTypes.NOW,
         },
-        userId: {
-            type: DataTypes.INTEGER,
+        address: {
+            type: DataTypes.STRING,
             allowNull: false,
-            references: {
-                model: User,
-                key: 'id',
-            },
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -55,9 +48,9 @@ Sales.init(
     },
     {
         sequelize,
-        modelName: 'Sales',
-        tableName: 'sales',
+        modelName: 'Customer',
+        tableName: 'customers',
     },
 );
 
-export default Sales;
+export default Customer;

@@ -1,13 +1,14 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../../config/db';
-import ProductInventory from '../products/ProductInventory';
 import User from '../users/User';
+import Supplier from '../suppliers/Supplier';
 
 class Purchases extends Model {
     public id!: number;
     public totalAmount!: number;
     public purchaseDate!: Date;
     public userId!: number;
+    public supplierId!: number;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -33,6 +34,14 @@ Purchases.init(
             allowNull: false,
             references: {
                 model: User,
+                key: 'id',
+            },
+        },
+        supplierId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: Supplier,
                 key: 'id',
             },
         },
