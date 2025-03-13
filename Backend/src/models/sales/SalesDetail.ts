@@ -67,4 +67,16 @@ SalesDetail.init(
     },
 );
 
+// ~ Actualiza el stock de un producto luego de una venta...
+SalesDetail.afterCreate(async (salesDetail, options) => {
+    const product = await ProductInventory.findByPk(
+        salesDetail.productInventoryId,
+    );
+
+    if (product) {
+        product.stock -= salesDetail.quantity;
+        await product.save();
+    }
+});
+
 export default SalesDetail;

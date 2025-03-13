@@ -67,4 +67,18 @@ PurchaseDetail.init(
     },
 );
 
+// ~ Actualiza el stock de un producto luego de una compra (adquisición)...
+PurchaseDetail.afterCreate(
+    async (purchaseDetail, options) => {
+        const product = await ProductInventory.findByPk(
+            purchaseDetail.productInventoryId,
+        );
+
+        if (product) {
+            product.stock += purchaseDetail.quantity;
+            await product.save();
+        }
+    },
+);
+
 export default PurchaseDetail;
