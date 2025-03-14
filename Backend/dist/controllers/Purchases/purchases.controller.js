@@ -12,11 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createPurchase = void 0;
+exports.registerPurchase = void 0;
 const models_1 = __importDefault(require("../../models"));
 const db_1 = __importDefault(require("../../config/db"));
 const { ProductInventory, Purchases, PurchaseDetail, Supplier, } = models_1.default;
-const createPurchase = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const registerPurchase = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { products, totalAmount, userId, supplierId } = req.body;
     const t = yield db_1.default.transaction();
     try {
@@ -77,5 +77,5 @@ const createPurchase = (req, res) => __awaiter(void 0, void 0, void 0, function*
         });
     }
 });
-exports.createPurchase = createPurchase;
+exports.registerPurchase = registerPurchase;
 //# sourceMappingURL=purchases.controller.js.map
