@@ -51,7 +51,9 @@ const authorize = (roles) => {
     return (req, res, next) => {
         var _a;
         // > Verificar si el usuario existe y si tiene un rol antes de verificar los permisos...
+        console.log(roles);
         const userRole = (_a = req.user) === null || _a === void 0 ? void 0 : _a.role;
+        console.log(userRole);
         if (!userRole || !roles.includes(userRole)) {
             return res.status(403).json({
                 error: 'Access denied. You need the appropriate authorization',

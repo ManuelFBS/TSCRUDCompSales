@@ -33,3 +33,5 @@ customerRouter.get(
     asyncHandler(authorize(['Owner', 'Admin', 'Employee'])),
     asyncHandler(getCustomerByIdDni),
 );
+
+export { customerRouter };

@@ -66,7 +66,12 @@ export const authorize = (roles: string[]) => {
         next: NextFunction,
     ) => {
         // > Verificar si el usuario existe y si tiene un rol antes de verificar los permisos...
+        console.log(roles);
+
         const userRole = (req as AuthRequest).user?.role;
+
+        console.log(userRole);
+
         if (!userRole || !roles.includes(userRole)) {
             return res.status(403).json({
                 error: 'Access denied. You need the appropriate authorization',

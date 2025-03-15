@@ -62,9 +62,8 @@ app.get('/api', (req, res) => {
 // * Routes...
 app.use('/api/auth', index_1.authRouter);
 app.use('/api/employees', index_1.employeeRouter);
-app.use('/api/users', 
-// asyncHandler(authMiddleware),
-index_1.userRouter);
+app.use('/api/users', index_1.userRouter);
 app.use('/api/suppliers', index_1.supplierRouter);
+app.use('/api/customers', index_1.customerRouter);
 exports.default = app;
 //# sourceMappingURL=app.js.map

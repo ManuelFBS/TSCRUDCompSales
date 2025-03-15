@@ -14,6 +14,7 @@ import {
     employeeRouter,
     userRouter,
     supplierRouter,
+    customerRouter,
 } from './routes/index';
 import { JWT_SECRET } from './config/auth';
 
@@ -68,11 +69,8 @@ app.get('/api', (req: Request, res: Response) => {
 // * Routes...
 app.use('/api/auth', authRouter);
 app.use('/api/employees', employeeRouter);
-app.use(
-    '/api/users',
-    // asyncHandler(authMiddleware),
-    userRouter,
-);
+app.use('/api/users', userRouter);
 app.use('/api/suppliers', supplierRouter);
+app.use('/api/customers', customerRouter);
 
 export default app;
