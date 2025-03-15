@@ -3,6 +3,8 @@ import { EmployeeSchema } from '../../validations/schemas/employeeSchema/employe
 import { convertToMySQLDate } from '../../utils/DateFormatter';
 import { buildEmployeeWhereClause } from '../../helpers/employee.helper';
 import models from '../../models';
+import sequelize from '../../config/db';
+import { validateSchema } from '../../utils/validationErrorHandler';
 
 const { Employee, Department, EmployeeStatus } = models;
 
@@ -12,80 +14,108 @@ export const createEmployee = async (
     res: Response,
 ) => {
     try {
-        // * Validación de datos...
-        const validatedData = EmployeeSchema.parse(
+        // * Validar los datos de entrada usando la función genérica
+        const validatedData = validateSchema(
+            EmployeeSchema,
             req.body,
         );
 
-        // * Formatear fecha...
-        const formattedBirthDate = convertToMySQLDate(
-            req.body.birthDate,
-        );
+        const t = await sequelize.transaction();
 
-        // * Validar conversión de fecha...
-        if (!formattedBirthDate) {
-            return res.status(400).json({
-                error: 'Fecha de nacimiento inválida',
+        try {
+            // * Formatear fecha...
+            const formattedBirthDate = convertToMySQLDate(
+                req.body.birthDate,
+            );
+
+            // * Validar conversión de fecha...
+            if (!formattedBirthDate) {
+                return res.status(400).json({
+                    error: 'Fecha de nacimiento inválida',
+                    message:
+                        'Por favor, use el formato DD/MM/YYYY',
+                });
+            }
+
+            const newEmployee = await Employee.create(
+                {
+                    dni: validatedData.dni,
+                    name: validatedData.name,
+                    lastName: validatedData.lastName,
+                    birthDate: formattedBirthDate,
+                    email: validatedData.email,
+                    phone: validatedData.phone,
+                    country: validatedData.country,
+                },
+                { transaction: t },
+            );
+
+            // * Crear registro en Department...
+            const dept = await Department.create(
+                {
+                    dni: newEmployee.dni,
+                    department: req.body.department,
+                    position: req.body.position,
+                },
+                { transaction: t },
+            );
+
+            // * Crear registro en EmployeeStatus...
+            const statusEmp = await EmployeeStatus.create(
+                {
+                    dni: newEmployee.dni,
+                    statusWork: 'Activo',
+                },
+                { transaction: t },
+            );
+
+            await t.commit();
+
+            res.status(201).json({
                 message:
-                    'Por favor, use el formato DD/MM/YYYY',
+                    'Employee created successfully...!!!',
+                ID: newEmployee.id,
+                DNI: newEmployee.dni,
+                Nombres: newEmployee.name,
+                Apellidos: newEmployee.lastName,
+                FechaNacimiento: req.body.birthDate, // > Fecha original del input...
+                FechaNacimientoFormateada:
+                    formattedBirthDate, // > Fecha en formato MySQL...
+                Email: newEmployee.email,
+                Telefono: newEmployee.phone,
+                Pais: newEmployee.country,
+                EstadoLaboral: statusEmp.statusWork,
+                Departamento: dept.department,
+                Cargo: dept.position,
             });
+        } catch (error: any) {
+            await t.rollback();
+
+            // * Manejo de errores específicos
+            if (error instanceof Error) {
+                // > Si es un error estándar de JavaScript
+                res.status(400).json({
+                    error: error.message,
+                    type: 'ValidationError',
+                });
+            } else {
+                // * Para otros tipos de errores
+                res.status(500).json({
+                    error: 'Error interno del servidor',
+                    details:
+                        error?.toString() ||
+                        'Error desconocido',
+                });
+            }
         }
-
-        const newEmployee = await Employee.create({
-            dni: validatedData.dni,
-            name: validatedData.name,
-            lastName: validatedData.lastName,
-            birthDate: formattedBirthDate,
-            email: validatedData.email,
-            phone: validatedData.phone,
-            country: validatedData.country,
-        });
-
-        // * Crear registro en Department...
-        const dept = await Department.create({
-            dni: newEmployee.dni,
-            department: req.body.department,
-            position: req.body.position,
-        });
-
-        // * Crear registro en EmployeeStatus...
-        const statusEmp = await EmployeeStatus.create({
-            dni: newEmployee.dni,
-            statusWork: 'Activo',
-        });
-
-        res.status(201).json({
-            message: 'Employee created successfully...!!!',
-            ID: newEmployee.id,
-            DNI: newEmployee.dni,
-            Nombres: newEmployee.name,
-            Apellidos: newEmployee.lastName,
-            FechaNacimiento: req.body.birthDate, // > Fecha original del input...
-            FechaNacimientoFormateada: formattedBirthDate, // > Fecha en formato MySQL...
-            Email: newEmployee.email,
-            Telefono: newEmployee.phone,
-            Pais: newEmployee.country,
-            EstadoLaboral: statusEmp.statusWork,
-            Departamento: dept.department,
-            Cargo: dept.position,
-        });
     } catch (error: any) {
-        // * Manejo de errores específicos
-        if (error instanceof Error) {
-            // > Si es un error estándar de JavaScript
-            res.status(400).json({
-                error: error.message,
-                type: 'ValidationError',
-            });
-        } else {
-            // * Para otros tipos de errores
-            res.status(500).json({
-                error: 'Error interno del servidor',
-                details:
-                    error?.toString() ||
-                    'Error desconocido',
-            });
-        }
+        // * Se captura el error lanzado por validateSchema...
+        res.status(error.status || 500).json({
+            message:
+                error.message ||
+                'Error interno del servidor',
+            errors: error.errors || undefined,
+        });
     }
 };
 

@@ -8,5 +8,6 @@ exports.CustomerSchema = zod_1.z.object({
     name: zod_1.z.string().min(1, 'Name is required...'),
     lastName: zod_1.z.string().min(1, 'Last name is required...'),
     address: zod_1.z.string().min(1, 'Address is required...'),
+    phone: zod_1.z.string().min(5, 'Phone is required...'),
 });
 //# sourceMappingURL=customerSchema.js.map

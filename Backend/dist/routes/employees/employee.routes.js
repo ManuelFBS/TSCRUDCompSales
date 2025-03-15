@@ -15,7 +15,7 @@ const asyncHandler = (fn) => (req, res, next) => {
 };
 // ~ Proteger todas las rutas de empleados...
 employeeRouter.use(asyncHandler(authMiddleware_1.authenticate));
-employeeRouter.post('/employee/new', asyncHandler((0, authMiddleware_1.authorize)(['Owner'])), asyncHandler(employees_controller_1.createEmployee));
+employeeRouter.post('/employee/new', asyncHandler((0, authMiddleware_1.authorize)(['Owner', 'Admin'])), asyncHandler(employees_controller_1.createEmployee));
 employeeRouter.get('/', asyncHandler((0, authMiddleware_1.authorize)(['Owner', 'Admin'])), employees_controller_1.getEmployees);
 employeeRouter.get('/employee/search/:id?', asyncHandler((0, authMiddleware_1.authorize)(['Owner', 'Admin'])), asyncHandler(employees_controller_1.getEmployeeByIdDni));
 employeeRouter.put('/employee/edit/:id?', asyncHandler((0, authMiddleware_1.authorize)(['Owner'])), asyncHandler(employees_controller_1.updateEmployee));

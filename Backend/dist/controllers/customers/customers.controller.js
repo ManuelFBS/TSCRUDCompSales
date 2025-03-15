@@ -17,29 +17,42 @@ const customerSchema_1 = require("../../validations/schemas/customerSchema/custo
 const employee_helper_1 = require("../../helpers/employee.helper");
 const models_1 = __importDefault(require("../../models"));
 const db_1 = __importDefault(require("../../config/db"));
+const validationErrorHandler_1 = require("../../utils/validationErrorHandler");
 const { Customer } = models_1.default;
+// ~ Registro de nuevo cliente...
 const registerCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { dni, name, lastName, address } = req.body;
-    const validatedData = customerSchema_1.CustomerSchema.parse(req.body);
-    const t = yield db_1.default.transaction();
     try {
-        const newCustomer = yield Customer.create({
-            dni: validatedData.dni,
-            name: validatedData.name,
-            lastName: validatedData.lastName,
-            address: validatedData.address,
-        }, { transaction: t });
-        yield t.commit();
-        res.status(201).json({
-            message: 'El nuevo Cliente ha sido registrado exitosamente...!!!',
-            newCustomer,
-        });
+        // * Validar los datos de entrada usando la función genérica
+        const validatedData = (0, validationErrorHandler_1.validateSchema)(customerSchema_1.CustomerSchema, req.body);
+        const t = yield db_1.default.transaction();
+        try {
+            const newCustomer = yield Customer.create({
+                dni: validatedData.dni,
+                name: validatedData.name,
+                lastName: validatedData.lastName,
+                address: validatedData.address,
+                phone: validatedData.phone,
+            }, { transaction: t });
+            yield t.commit();
+            res.status(201).json({
+                message: 'El nuevo Cliente ha sido registrado exitosamente...!!!',
+                newCustomer,
+            });
+        }
+        catch (error) {
+            yield t.rollback();
+            res.status(500).json({
+                message: 'Error al intentar registrar al nuevo Cliente...!',
+                error,
+            });
+        }
     }
     catch (error) {
-        yield t.rollback();
-        res.status(500).json({
-            message: 'Error al intentar registrar al nuevo Cliente...!',
-            error,
+        // * Se captura el error lanzado por validateSchema...
+        res.status(error.status || 500).json({
+            message: error.message ||
+                'Error interno del servidor',
+            errors: error.errors || undefined,
         });
     }
 });

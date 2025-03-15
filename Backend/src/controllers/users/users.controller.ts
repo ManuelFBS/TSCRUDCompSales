@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { UserSchema } from '../../validations/schemas/userSchema/userSchema';
 import models from '../../models';
+import sequelize from '../../config/db';
+import { validateSchema } from '../../utils/validationErrorHandler';
 import { HashPassword } from '../../utils/authUtils';
 import { buildUserWhereClause } from '../../helpers/user.helper';
 
@@ -11,39 +13,66 @@ export const createUser = async (
     res: Response,
 ) => {
     try {
-        const validatedData = UserSchema.parse(req.body);
-
-        // * Se verificar si el empleado existe...
-        const employee = await Employee.findOne({
-            where: { dni: validatedData.dni },
-        });
-
-        if (!employee) {
-            return res.status(404).json({
-                error: 'Employee not found...!',
-            });
-        }
-
-        // * Se procede a encriptar el password...
-        const hashedPassword = await HashPassword(
-            validatedData.password,
+        const validatedData = validateSchema(
+            UserSchema,
+            req.body,
         );
-        //
-        validatedData.password = hashedPassword;
 
-        // * Se crea el usuario...
-        const user = await User.create(validatedData);
+        const t = await sequelize.transaction();
 
-        res.status(201).json({
-            message:
-                'New User has been created successfully...!!!',
-            DNI: user.dni,
-            Usuario: user.user,
-            Rol: user.role,
-            Status: user.status,
-        });
+        try {
+            // * Se verificar si el empleado existe...
+            const employee = await Employee.findOne({
+                where: { dni: validatedData.dni },
+            });
+
+            if (!employee) {
+                return res.status(404).json({
+                    error: 'Employee not found...!',
+                });
+            }
+
+            // * Se procede a encriptar el password...
+            const hashedPassword = await HashPassword(
+                validatedData.password,
+            );
+            //
+            validatedData.password = hashedPassword;
+
+            // * Se crea el usuario...
+            const newUser = await User.create(
+                {
+                    dni: validatedData.dni,
+                    user: validatedData.user,
+                    password: validatedData.password,
+                    role: validatedData.role,
+                    status: validatedData.status,
+                },
+                { transaction: t },
+            );
+
+            await t.commit();
+
+            res.status(201).json({
+                message:
+                    'New User has been created successfully...!!!',
+                DNI: newUser.dni,
+                Usuario: newUser.user,
+                Rol: newUser.role,
+                Status: newUser.status,
+            });
+        } catch (error: any) {
+            await t.rollback();
+            res.status(500).json({ error: error.message });
+        }
     } catch (error: any) {
-        res.status(500).json({ error: error.message });
+        // * Se captura el error lanzado por validateSchema...
+        res.status(error.status || 500).json({
+            message:
+                error.message ||
+                'Error interno del servidor',
+            errors: error.errors || undefined,
+        });
     }
 };
 

@@ -7,6 +7,7 @@ class Customer extends Model {
     public name!: string;
     public lastName!: string;
     public address!: string;
+    public phone!: string;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -32,6 +33,10 @@ Customer.init(
             allowNull: false,
         },
         address: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        phone: {
             type: DataTypes.STRING,
             allowNull: false,
         },

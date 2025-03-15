@@ -16,6 +16,8 @@ const asyncHandler =
         Promise.resolve(fn(req, res, next)).catch(next);
     };
 
+customerRouter.use(asyncHandler(authenticate));
+
 customerRouter.post(
     '/customer/new',
     asyncHandler(authorize(['Owner', 'Admin', 'Employee'])),

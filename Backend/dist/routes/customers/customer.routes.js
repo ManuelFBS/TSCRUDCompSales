@@ -12,6 +12,7 @@ exports.customerRouter = customerRouter;
 const asyncHandler = (fn) => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
 };
+customerRouter.use(asyncHandler(authMiddleware_1.authenticate));
 customerRouter.post('/customer/new', asyncHandler((0, authMiddleware_1.authorize)(['Owner', 'Admin', 'Employee'])), customers_controller_1.registerCustomer);
 customerRouter.get('/', asyncHandler((0, authMiddleware_1.authorize)(['Owner', 'Admin', 'Employee'])), customers_controller_1.getAllCustomers);
 customerRouter.get('/customer/search/:id?', asyncHandler((0, authMiddleware_1.authorize)(['Owner', 'Admin', 'Employee'])), asyncHandler(customers_controller_1.getCustomerByIdDni));

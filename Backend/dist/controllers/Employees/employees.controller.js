@@ -17,74 +17,89 @@ const employeeSchema_1 = require("../../validations/schemas/employeeSchema/emplo
 const DateFormatter_1 = require("../../utils/DateFormatter");
 const employee_helper_1 = require("../../helpers/employee.helper");
 const models_1 = __importDefault(require("../../models"));
+const db_1 = __importDefault(require("../../config/db"));
+const validationErrorHandler_1 = require("../../utils/validationErrorHandler");
 const { Employee, Department, EmployeeStatus } = models_1.default;
 // ~ Se crea un nuevo empleado...
 const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // * Validación de datos...
-        const validatedData = employeeSchema_1.EmployeeSchema.parse(req.body);
-        // * Formatear fecha...
-        const formattedBirthDate = (0, DateFormatter_1.convertToMySQLDate)(req.body.birthDate);
-        // * Validar conversión de fecha...
-        if (!formattedBirthDate) {
-            return res.status(400).json({
-                error: 'Fecha de nacimiento inválida',
-                message: 'Por favor, use el formato DD/MM/YYYY',
+        // * Validar los datos de entrada usando la función genérica
+        const validatedData = (0, validationErrorHandler_1.validateSchema)(employeeSchema_1.EmployeeSchema, req.body);
+        const t = yield db_1.default.transaction();
+        try {
+            // * Formatear fecha...
+            const formattedBirthDate = (0, DateFormatter_1.convertToMySQLDate)(req.body.birthDate);
+            // * Validar conversión de fecha...
+            if (!formattedBirthDate) {
+                return res.status(400).json({
+                    error: 'Fecha de nacimiento inválida',
+                    message: 'Por favor, use el formato DD/MM/YYYY',
+                });
+            }
+            const newEmployee = yield Employee.create({
+                dni: validatedData.dni,
+                name: validatedData.name,
+                lastName: validatedData.lastName,
+                birthDate: formattedBirthDate,
+                email: validatedData.email,
+                phone: validatedData.phone,
+                country: validatedData.country,
+            }, { transaction: t });
+            // * Crear registro en Department...
+            const dept = yield Department.create({
+                dni: newEmployee.dni,
+                department: req.body.department,
+                position: req.body.position,
+            }, { transaction: t });
+            // * Crear registro en EmployeeStatus...
+            const statusEmp = yield EmployeeStatus.create({
+                dni: newEmployee.dni,
+                statusWork: 'Activo',
+            }, { transaction: t });
+            yield t.commit();
+            res.status(201).json({
+                message: 'Employee created successfully...!!!',
+                ID: newEmployee.id,
+                DNI: newEmployee.dni,
+                Nombres: newEmployee.name,
+                Apellidos: newEmployee.lastName,
+                FechaNacimiento: req.body.birthDate, // > Fecha original del input...
+                FechaNacimientoFormateada: formattedBirthDate, // > Fecha en formato MySQL...
+                Email: newEmployee.email,
+                Telefono: newEmployee.phone,
+                Pais: newEmployee.country,
+                EstadoLaboral: statusEmp.statusWork,
+                Departamento: dept.department,
+                Cargo: dept.position,
             });
         }
-        const newEmployee = yield Employee.create({
-            dni: validatedData.dni,
-            name: validatedData.name,
-            lastName: validatedData.lastName,
-            birthDate: formattedBirthDate,
-            email: validatedData.email,
-            phone: validatedData.phone,
-            country: validatedData.country,
-        });
-        // * Crear registro en Department...
-        const dept = yield Department.create({
-            dni: newEmployee.dni,
-            department: req.body.department,
-            position: req.body.position,
-        });
-        // * Crear registro en EmployeeStatus...
-        const statusEmp = yield EmployeeStatus.create({
-            dni: newEmployee.dni,
-            statusWork: 'Activo',
-        });
-        res.status(201).json({
-            message: 'Employee created successfully...!!!',
-            ID: newEmployee.id,
-            DNI: newEmployee.dni,
-            Nombres: newEmployee.name,
-            Apellidos: newEmployee.lastName,
-            FechaNacimiento: req.body.birthDate, // > Fecha original del input...
-            FechaNacimientoFormateada: formattedBirthDate, // > Fecha en formato MySQL...
-            Email: newEmployee.email,
-            Telefono: newEmployee.phone,
-            Pais: newEmployee.country,
-            EstadoLaboral: statusEmp.statusWork,
-            Departamento: dept.department,
-            Cargo: dept.position,
-        });
+        catch (error) {
+            yield t.rollback();
+            // * Manejo de errores específicos
+            if (error instanceof Error) {
+                // > Si es un error estándar de JavaScript
+                res.status(400).json({
+                    error: error.message,
+                    type: 'ValidationError',
+                });
+            }
+            else {
+                // * Para otros tipos de errores
+                res.status(500).json({
+                    error: 'Error interno del servidor',
+                    details: (error === null || error === void 0 ? void 0 : error.toString()) ||
+                        'Error desconocido',
+                });
+            }
+        }
     }
     catch (error) {
-        // * Manejo de errores específicos
-        if (error instanceof Error) {
-            // > Si es un error estándar de JavaScript
-            res.status(400).json({
-                error: error.message,
-                type: 'ValidationError',
-            });
-        }
-        else {
-            // * Para otros tipos de errores
-            res.status(500).json({
-                error: 'Error interno del servidor',
-                details: (error === null || error === void 0 ? void 0 : error.toString()) ||
-                    'Error desconocido',
-            });
-        }
+        // * Se captura el error lanzado por validateSchema...
+        res.status(error.status || 500).json({
+            message: error.message ||
+                'Error interno del servidor',
+            errors: error.errors || undefined,
+        });
     }
 });
 exports.createEmployee = createEmployee;

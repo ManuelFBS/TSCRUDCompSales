@@ -15,37 +15,58 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUser = exports.updateUser = exports.getUserByIdDniUser = exports.getUsers = exports.createUser = void 0;
 const userSchema_1 = require("../../validations/schemas/userSchema/userSchema");
 const models_1 = __importDefault(require("../../models"));
+const db_1 = __importDefault(require("../../config/db"));
+const validationErrorHandler_1 = require("../../utils/validationErrorHandler");
 const authUtils_1 = require("../../utils/authUtils");
 const user_helper_1 = require("../../helpers/user.helper");
 const { User, Employee } = models_1.default;
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validatedData = userSchema_1.UserSchema.parse(req.body);
-        // * Se verificar si el empleado existe...
-        const employee = yield Employee.findOne({
-            where: { dni: validatedData.dni },
-        });
-        if (!employee) {
-            return res.status(404).json({
-                error: 'Employee not found...!',
+        const validatedData = (0, validationErrorHandler_1.validateSchema)(userSchema_1.UserSchema, req.body);
+        const t = yield db_1.default.transaction();
+        try {
+            // * Se verificar si el empleado existe...
+            const employee = yield Employee.findOne({
+                where: { dni: validatedData.dni },
+            });
+            if (!employee) {
+                return res.status(404).json({
+                    error: 'Employee not found...!',
+                });
+            }
+            // * Se procede a encriptar el password...
+            const hashedPassword = yield (0, authUtils_1.HashPassword)(validatedData.password);
+            //
+            validatedData.password = hashedPassword;
+            // * Se crea el usuario...
+            const newUser = yield User.create({
+                dni: validatedData.dni,
+                user: validatedData.user,
+                password: validatedData.password,
+                role: validatedData.role,
+                status: validatedData.status,
+            }, { transaction: t });
+            yield t.commit();
+            res.status(201).json({
+                message: 'New User has been created successfully...!!!',
+                DNI: newUser.dni,
+                Usuario: newUser.user,
+                Rol: newUser.role,
+                Status: newUser.status,
             });
         }
-        // * Se procede a encriptar el password...
-        const hashedPassword = yield (0, authUtils_1.HashPassword)(validatedData.password);
-        //
-        validatedData.password = hashedPassword;
-        // * Se crea el usuario...
-        const user = yield User.create(validatedData);
-        res.status(201).json({
-            message: 'New User has been created successfully...!!!',
-            DNI: user.dni,
-            Usuario: user.user,
-            Rol: user.role,
-            Status: user.status,
-        });
+        catch (error) {
+            yield t.rollback();
+            res.status(500).json({ error: error.message });
+        }
     }
     catch (error) {
-        res.status(500).json({ error: error.message });
+        // * Se captura el error lanzado por validateSchema...
+        res.status(error.status || 500).json({
+            message: error.message ||
+                'Error interno del servidor',
+            errors: error.errors || undefined,
+        });
     }
 });
 exports.createUser = createUser;

@@ -24,7 +24,7 @@ employeeRouter.use(asyncHandler(authenticate));
 
 employeeRouter.post(
     '/employee/new',
-    asyncHandler(authorize(['Owner'])),
+    asyncHandler(authorize(['Owner', 'Admin'])),
     asyncHandler(createEmployee),
 );
 
