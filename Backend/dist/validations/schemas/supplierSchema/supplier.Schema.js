@@ -9,6 +9,7 @@ exports.SupplierSchema = zod_1.z.object({
         .string()
         .min(5, 'Company Name is required...'),
     address: zod_1.z.string().min(5, 'Address is reqired...'),
+    phone: zod_1.z.string().min(5, 'Phone is required...'),
     code: zod_1.z.string().min(3, 'Code Supplier is required...'),
     country: zod_1.z.string().min(3, 'Country is required...'),
 });

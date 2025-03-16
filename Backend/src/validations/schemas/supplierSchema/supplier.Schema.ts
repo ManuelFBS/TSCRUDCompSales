@@ -7,6 +7,7 @@ export const SupplierSchema = z.object({
         .string()
         .min(5, 'Company Name is required...'),
     address: z.string().min(5, 'Address is reqired...'),
+    phone: z.string().min(5, 'Phone is required...'),
     code: z.string().min(3, 'Code Supplier is required...'),
     country: z.string().min(3, 'Country is required...'),
 });

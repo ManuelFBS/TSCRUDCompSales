@@ -26,6 +26,7 @@ export const registerSupplier = async (
                     rif: validatedData.rif,
                     companyName: validatedData.companyName,
                     address: validatedData.address,
+                    phone: validatedData.phone,
                     code: validatedData.code,
                     country: validatedData.country,
                 },

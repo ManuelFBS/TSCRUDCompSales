@@ -13,31 +13,46 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSuppliers = exports.registerSupplier = void 0;
+const supplier_Schema_1 = require("../../validations/schemas/supplierSchema/supplier.Schema");
 const models_1 = __importDefault(require("../../models"));
 const db_1 = __importDefault(require("../../config/db"));
+const validationErrorHandler_1 = require("../../utils/validationErrorHandler");
 const { Supplier } = models_1.default;
+// ~ Registro de nuevo proveedor...
 const registerSupplier = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { rif, companyName, address, code, country } = req.body;
-    const t = yield db_1.default.transaction();
     try {
-        const newSupplier = yield Supplier.create({
-            rif,
-            companyName,
-            address,
-            code,
-            country,
-        }, { transaction: t });
-        yield t.commit();
-        res.status(201).json({
-            message: 'El nuevo Proveedor ha sido registrado exitosamente...!!!',
-            newSupplier,
-        });
+        // * Validar los datos de entrada usando la función genérica...
+        const validatedData = (0, validationErrorHandler_1.validateSchema)(supplier_Schema_1.SupplierSchema, req.body);
+        const t = yield db_1.default.transaction();
+        try {
+            const newSupplier = yield Supplier.create({
+                rif: validatedData.rif,
+                companyName: validatedData.companyName,
+                address: validatedData.address,
+                phone: validatedData.phone,
+                code: validatedData.code,
+                country: validatedData.country,
+            }, { transaction: t });
+            yield t.commit();
+            res.status(201).json({
+                message: 'El nuevo Proveedor ha sido registrado exitosamente...!!!',
+                newSupplier,
+            });
+        }
+        catch (error) {
+            yield t.rollback();
+            res.status(500).json({
+                message: 'Error al intentar registrar al nuevo Proveedor...!',
+                error,
+            });
+        }
     }
     catch (error) {
-        yield t.rollback();
-        res.status(500).json({
-            message: 'Error al intentar registrar al nuevo Proveedor...!',
-            error,
+        // * Se captura el error lanzado por validateSchema...
+        res.status(error.status || 500).json({
+            message: error.message ||
+                'Error interno del servidor',
+            errors: error.errors || undefined,
         });
     }
 });

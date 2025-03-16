@@ -26,6 +26,10 @@ Supplier.init({
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
+    phone: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
+    },
     code: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,

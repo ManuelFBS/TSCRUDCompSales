@@ -22,7 +22,7 @@ const { Customer } = models_1.default;
 // ~ Registro de nuevo cliente...
 const registerCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // * Validar los datos de entrada usando la función genérica
+        // * Validar los datos de entrada usando la función genérica...
         const validatedData = (0, validationErrorHandler_1.validateSchema)(customerSchema_1.CustomerSchema, req.body);
         const t = yield db_1.default.transaction();
         try {
