@@ -15,6 +15,7 @@ import {
     userRouter,
     supplierRouter,
     customerRouter,
+    purchaseRouter,
 } from './routes/index';
 import { JWT_SECRET } from './config/auth';
 
@@ -72,5 +73,6 @@ app.use('/api/employees', employeeRouter);
 app.use('/api/users', userRouter);
 app.use('/api/suppliers', supplierRouter);
 app.use('/api/customers', customerRouter);
+app.use('/purchases', purchaseRouter);
 
 export default app;

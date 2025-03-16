@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const db_1 = __importDefault(require("../../config/db"));
 const User_1 = __importDefault(require("../users/User"));
+const Customer_1 = __importDefault(require("../customers/Customer"));
 class Sales extends sequelize_1.Model {
 }
 Sales.init({
@@ -33,6 +34,14 @@ Sales.init({
         allowNull: false,
         references: {
             model: User_1.default,
+            key: 'id',
+        },
+    },
+    customerId: {
+        type: sequelize_1.DataTypes.NUMBER,
+        allowNull: false,
+        references: {
+            model: Customer_1.default,
             key: 'id',
         },
     },

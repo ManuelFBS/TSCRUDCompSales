@@ -62,8 +62,14 @@ Department_1.default.belongsTo(Employee_1.default, {
     as: 'employee',
 });
 // ~ Relación entre Sales y SalesDetail...
-Sales_1.default.hasMany(SalesDetail_1.default, { foreignKey: 'salesId' });
-SalesDetail_1.default.belongsTo(Sales_1.default, { foreignKey: 'salesId' });
+Sales_1.default.hasMany(SalesDetail_1.default, {
+    foreignKey: 'salesId',
+    as: 'details',
+});
+SalesDetail_1.default.belongsTo(Sales_1.default, {
+    foreignKey: 'salesId',
+    as: 'sale',
+});
 // ~ Relación entre Sales y Customer...
 Sales_1.default.belongsTo(Customer_1.default, {
     foreignKey: 'customerId',
