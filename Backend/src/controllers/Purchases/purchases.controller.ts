@@ -14,13 +14,8 @@ export const registerPurchase = async (
     req: Request,
     res: Response,
 ) => {
-    const {
-        products,
-        purchaseDate,
-        totalAmount,
-        userId,
-        supplierId,
-    } = req.body;
+    const { purchaseDate, userId, supplierId, products } =
+        req.body;
 
     // * Se valida que el usuario y el proveedor existan...
     const user = await User.findByPk(userId);
@@ -35,7 +30,15 @@ export const registerPurchase = async (
     const t = await sequelize.transaction();
 
     try {
-        // * Se crea la compra...
+        // * Calcular el totalAmount sumando el totalPrice de cada producto...
+        let totalAmount = 0;
+        //
+        for (const product of products) {
+            const { quantity, unitPrice } = product;
+            totalAmount += quantity * unitPrice;
+        }
+
+        // * Se crea la compra con el totalAmount calculado previamente...
         const purchase = await Purchases.create(
             {
                 totalAmount,
@@ -50,6 +53,7 @@ export const registerPurchase = async (
         for (const product of products) {
             const {
                 productCode,
+                brand,
                 productName,
                 description,
                 quantity,
@@ -74,6 +78,7 @@ export const registerPurchase = async (
                     await ProductInventory.create(
                         {
                             productCode,
+                            brand,
                             productName,
                             description,
                             stock: quantity,

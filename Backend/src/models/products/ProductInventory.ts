@@ -4,6 +4,7 @@ import sequelize from '../../config/db';
 class ProductInventory extends Model {
     public id!: number;
     public productCode!: string;
+    public brand!: string;
     public productName!: string;
     public description!: string;
     public stock!: number;
@@ -24,6 +25,11 @@ ProductInventory.init(
             type: DataTypes.STRING,
             allowNull: false,
             unique: true,
+        },
+        brand: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'Generics',
         },
         productName: {
             type: DataTypes.STRING,
