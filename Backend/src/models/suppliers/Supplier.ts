@@ -6,6 +6,7 @@ class Supplier extends Model {
     public rif!: string;
     public companyName!: string;
     public address!: string;
+    public phone!: string;
     public code!: string;
     public country!: string;
     public readonly createdAt!: Date;
@@ -29,6 +30,10 @@ Supplier.init(
             allowNull: false,
         },
         address: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        phone: {
             type: DataTypes.STRING,
             allowNull: false,
         },

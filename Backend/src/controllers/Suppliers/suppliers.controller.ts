@@ -1,42 +1,58 @@
 import { Request, Response } from 'express';
+import { SupplierSchema } from '../../validations/schemas/supplierSchema/supplier.Schema';
 import models from '../../models';
 import sequelize from '../../config/db';
+import { validateSchema } from '../../utils/validationErrorHandler';
 
 const { Supplier } = models;
 
+// ~ Registro de nuevo proveedor...
 export const registerSupplier = async (
     req: Request,
     res: Response,
 ) => {
-    const { rif, companyName, address, code, country } =
-        req.body;
-
-    const t = await sequelize.transaction();
-
     try {
-        const newSupplier = await Supplier.create(
-            {
-                rif,
-                companyName,
-                address,
-                code,
-                country,
-            },
-            { transaction: t },
+        // * Validar los datos de entrada usando la función genérica...
+        const validatedData = validateSchema(
+            SupplierSchema,
+            req.body,
         );
 
-        await t.commit();
-        res.status(201).json({
+        const t = await sequelize.transaction();
+
+        try {
+            const newSupplier = await Supplier.create(
+                {
+                    rif: validatedData.rif,
+                    companyName: validatedData.companyName,
+                    address: validatedData.address,
+                    code: validatedData.code,
+                    country: validatedData.country,
+                },
+                { transaction: t },
+            );
+
+            await t.commit();
+            res.status(201).json({
+                message:
+                    'El nuevo Proveedor ha sido registrado exitosamente...!!!',
+                newSupplier,
+            });
+        } catch (error) {
+            await t.rollback();
+            res.status(500).json({
+                message:
+                    'Error al intentar registrar al nuevo Proveedor...!',
+                error,
+            });
+        }
+    } catch (error: any) {
+        // * Se captura el error lanzado por validateSchema...
+        res.status(error.status || 500).json({
             message:
-                'El nuevo Proveedor ha sido registrado exitosamente...!!!',
-            newSupplier,
-        });
-    } catch (error) {
-        await t.rollback();
-        res.status(500).json({
-            message:
-                'Error al intentar registrar al nuevo Proveedor...!',
-            error,
+                error.message ||
+                'Error interno del servidor',
+            errors: error.errors || undefined,
         });
     }
 };

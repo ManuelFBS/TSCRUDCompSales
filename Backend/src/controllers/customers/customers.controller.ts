@@ -13,7 +13,7 @@ export const registerCustomer = async (
     res: Response,
 ) => {
     try {
-        // * Validar los datos de entrada usando la función genérica
+        // * Validar los datos de entrada usando la función genérica...
         const validatedData = validateSchema(
             CustomerSchema,
             req.body,
