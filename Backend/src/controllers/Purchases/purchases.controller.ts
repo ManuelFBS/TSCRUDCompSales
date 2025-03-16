@@ -7,14 +7,30 @@ const {
     Purchases,
     PurchaseDetail,
     Supplier,
+    User,
 } = models;
 
 export const registerPurchase = async (
     req: Request,
     res: Response,
 ) => {
-    const { products, totalAmount, userId, supplierId } =
-        req.body;
+    const {
+        products,
+        purchaseDate,
+        totalAmount,
+        userId,
+        supplierId,
+    } = req.body;
+
+    // * Se valida que el usuario y el proveedor existan...
+    const user = await User.findByPk(userId);
+    const supplier = await Supplier.findByPk(supplierId);
+
+    if (!user || !supplier) {
+        return res.status(404).json({
+            message: 'Usuario o proveedor no encontrado',
+        });
+    }
 
     const t = await sequelize.transaction();
 
@@ -23,7 +39,7 @@ export const registerPurchase = async (
         const purchase = await Purchases.create(
             {
                 totalAmount,
-                purchaseDate: new Date(),
+                purchaseDate,
                 userId,
                 supplierId,
             },
@@ -36,17 +52,23 @@ export const registerPurchase = async (
                 productCode,
                 productName,
                 description,
-                unitPrice,
                 quantity,
+                unitPrice,
             } = product;
 
             // * Verificar si el producto ya existe en el inventario...
             let productInventory =
                 await ProductInventory.findOne({
-                    where: productCode,
+                    where: { productCode },
                 });
 
-            if (!productInventory) {
+            if (productInventory) {
+                // > Si el producto existe, actualizar el stock...
+                productInventory.stock += quantity;
+                await productInventory.save({
+                    transaction: t,
+                });
+            } else {
                 // > Si el producto no existe, crearlo...
                 productInventory =
                     await ProductInventory.create(
@@ -54,17 +76,12 @@ export const registerPurchase = async (
                             productCode,
                             productName,
                             description,
+                            stock: quantity,
                             unitPrice,
-                            stock: quantity, // Stock inicial
+                            isActive: true,
                         },
                         { transaction: t },
                     );
-            } else {
-                // > Si el producto existe, actualizar el stock...
-                productInventory.stock += quantity;
-                await productInventory.save({
-                    transaction: t,
-                });
             }
 
             // * Crear el detalle de la compra...

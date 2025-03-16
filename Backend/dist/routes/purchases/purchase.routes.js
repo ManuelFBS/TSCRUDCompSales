@@ -15,5 +15,5 @@ const asyncHandler = (fn) => (req, res, next) => {
 };
 // ~ Proteger las rutas de Purchases...
 purchaseRouter.use(asyncHandler(authMiddleware_1.authenticate));
-purchaseRouter.post('/purchase/new', asyncHandler((0, authMiddleware_1.authorize)(['Owner', 'Admin'])), purchases_controller_1.registerPurchase);
+purchaseRouter.post('/purchase/new', asyncHandler((0, authMiddleware_1.authorize)(['Owner', 'Admin'])), asyncHandler(purchases_controller_1.registerPurchase));
 //# sourceMappingURL=purchase.routes.js.map

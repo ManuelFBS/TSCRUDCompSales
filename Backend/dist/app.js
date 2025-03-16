@@ -65,6 +65,6 @@ app.use('/api/employees', index_1.employeeRouter);
 app.use('/api/users', index_1.userRouter);
 app.use('/api/suppliers', index_1.supplierRouter);
 app.use('/api/customers', index_1.customerRouter);
-app.use('/purchases', index_1.purchaseRouter);
+app.use('/api/purchases', index_1.purchaseRouter);
 exports.default = app;
 //# sourceMappingURL=app.js.map

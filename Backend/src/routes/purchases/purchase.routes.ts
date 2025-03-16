@@ -20,7 +20,7 @@ purchaseRouter.use(asyncHandler(authenticate));
 purchaseRouter.post(
     '/purchase/new',
     asyncHandler(authorize(['Owner', 'Admin'])),
-    registerPurchase,
+    asyncHandler(registerPurchase),
 );
 
 export { purchaseRouter };

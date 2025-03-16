@@ -73,6 +73,6 @@ app.use('/api/employees', employeeRouter);
 app.use('/api/users', userRouter);
 app.use('/api/suppliers', supplierRouter);
 app.use('/api/customers', customerRouter);
-app.use('/purchases', purchaseRouter);
+app.use('/api/purchases', purchaseRouter);
 
 export default app;

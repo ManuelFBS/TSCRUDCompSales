@@ -15,42 +15,51 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerPurchase = void 0;
 const models_1 = __importDefault(require("../../models"));
 const db_1 = __importDefault(require("../../config/db"));
-const { ProductInventory, Purchases, PurchaseDetail, Supplier, } = models_1.default;
+const { ProductInventory, Purchases, PurchaseDetail, Supplier, User, } = models_1.default;
 const registerPurchase = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { products, totalAmount, userId, supplierId } = req.body;
+    const { products, purchaseDate, totalAmount, userId, supplierId, } = req.body;
+    // * Se valida que el usuario y el proveedor existan...
+    const user = yield User.findByPk(userId);
+    const supplier = yield Supplier.findByPk(supplierId);
+    if (!user || !supplier) {
+        return res.status(404).json({
+            message: 'Usuario o proveedor no encontrado',
+        });
+    }
     const t = yield db_1.default.transaction();
     try {
         // * Se crea la compra...
         const purchase = yield Purchases.create({
             totalAmount,
-            purchaseDate: new Date(),
+            purchaseDate,
             userId,
             supplierId,
         }, { transaction: t });
         // * Procesar cada producto de la compra...
         for (const product of products) {
-            const { productCode, productName, description, unitPrice, quantity, } = product;
+            const { productCode, productName, description, quantity, unitPrice, } = product;
             // * Verificar si el producto ya existe en el inventario...
             let productInventory = yield ProductInventory.findOne({
-                where: productCode,
+                where: { productCode },
             });
-            if (!productInventory) {
+            if (productInventory) {
+                // > Si el producto existe, actualizar el stock...
+                productInventory.stock += quantity;
+                yield productInventory.save({
+                    transaction: t,
+                });
+            }
+            else {
                 // > Si el producto no existe, crearlo...
                 productInventory =
                     yield ProductInventory.create({
                         productCode,
                         productName,
                         description,
+                        stock: quantity,
                         unitPrice,
-                        stock: quantity, // Stock inicial
+                        isActive: true,
                     }, { transaction: t });
-            }
-            else {
-                // > Si el producto existe, actualizar el stock...
-                productInventory.stock += quantity;
-                yield productInventory.save({
-                    transaction: t,
-                });
             }
             // * Crear el detalle de la compra...
             yield PurchaseDetail.create({
