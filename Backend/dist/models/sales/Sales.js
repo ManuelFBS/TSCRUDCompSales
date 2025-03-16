@@ -38,7 +38,7 @@ Sales.init({
         },
     },
     customerId: {
-        type: sequelize_1.DataTypes.NUMBER,
+        type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: Customer_1.default,
