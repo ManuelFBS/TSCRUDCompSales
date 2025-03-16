@@ -48,8 +48,14 @@ Department.belongsTo(Employee, {
 });
 
 // ~ Relación entre Sales y SalesDetail...
-Sales.hasMany(SalesDetail, { foreignKey: 'salesId' });
-SalesDetail.belongsTo(Sales, { foreignKey: 'salesId' });
+Sales.hasMany(SalesDetail, {
+    foreignKey: 'salesId',
+    as: 'details',
+});
+SalesDetail.belongsTo(Sales, {
+    foreignKey: 'salesId',
+    as: 'sale',
+});
 
 // ~ Relación entre Sales y Customer...
 Sales.belongsTo(Customer, {

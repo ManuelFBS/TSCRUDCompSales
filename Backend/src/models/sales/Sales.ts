@@ -9,6 +9,7 @@ class Sales extends Model {
     public tax!: number;
     public saleDate!: Date;
     public userId!: number;
+    public customerId!: number;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -39,6 +40,14 @@ Sales.init(
             allowNull: false,
             references: {
                 model: User,
+                key: 'id',
+            },
+        },
+        customerId: {
+            type: DataTypes.NUMBER,
+            allowNull: false,
+            references: {
+                model: Customer,
                 key: 'id',
             },
         },
