@@ -18,6 +18,11 @@ ProductInventory.init({
         allowNull: false,
         unique: true,
     },
+    brand: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'Generics',
+    },
     productName: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,

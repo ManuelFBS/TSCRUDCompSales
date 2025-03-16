@@ -44,7 +44,7 @@ Sales.init(
             },
         },
         customerId: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
             allowNull: false,
             references: {
                 model: Customer,

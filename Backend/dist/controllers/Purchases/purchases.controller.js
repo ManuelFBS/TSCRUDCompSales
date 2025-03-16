@@ -17,7 +17,7 @@ const models_1 = __importDefault(require("../../models"));
 const db_1 = __importDefault(require("../../config/db"));
 const { ProductInventory, Purchases, PurchaseDetail, Supplier, User, } = models_1.default;
 const registerPurchase = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { products, purchaseDate, totalAmount, userId, supplierId, } = req.body;
+    const { purchaseDate, userId, supplierId, products } = req.body;
     // * Se valida que el usuario y el proveedor existan...
     const user = yield User.findByPk(userId);
     const supplier = yield Supplier.findByPk(supplierId);
@@ -28,7 +28,14 @@ const registerPurchase = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
     const t = yield db_1.default.transaction();
     try {
-        // * Se crea la compra...
+        // * Calcular el totalAmount sumando el totalPrice de cada producto...
+        let totalAmount = 0;
+        //
+        for (const product of products) {
+            const { quantity, unitPrice } = product;
+            totalAmount += quantity * unitPrice;
+        }
+        // * Se crea la compra con el totalAmount calculado previamente...
         const purchase = yield Purchases.create({
             totalAmount,
             purchaseDate,
@@ -37,7 +44,7 @@ const registerPurchase = (req, res) => __awaiter(void 0, void 0, void 0, functio
         }, { transaction: t });
         // * Procesar cada producto de la compra...
         for (const product of products) {
-            const { productCode, productName, description, quantity, unitPrice, } = product;
+            const { productCode, brand, productName, description, quantity, unitPrice, } = product;
             // * Verificar si el producto ya existe en el inventario...
             let productInventory = yield ProductInventory.findOne({
                 where: { productCode },
@@ -54,6 +61,7 @@ const registerPurchase = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 productInventory =
                     yield ProductInventory.create({
                         productCode,
+                        brand,
                         productName,
                         description,
                         stock: quantity,
