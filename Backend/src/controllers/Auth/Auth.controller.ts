@@ -52,7 +52,14 @@ export const login = async (
         );
 
         // * Se envía el token de respuesta...
-        res.status(200).json({ token });
+        res.status(200).json({
+            token,
+            user: {
+                id: foundUser.id,
+                dni: foundUser.dni,
+                role: foundUser.role,
+            },
+        });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }

@@ -21,7 +21,7 @@ export const LoginPage = () => {
             // setAuth(token,{id:}),dni:''
             navigate('/dashboard');
         } catch (error) {
-            alert('Login failed...!');
+            alert(`Login failed... Error: ${error}`);
         }
     };
 
