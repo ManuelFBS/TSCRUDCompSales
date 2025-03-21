@@ -46,7 +46,14 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             expiresIn: auth_1.JWT_EXPIRES_IN,
         });
         // * Se envía el token de respuesta...
-        res.status(200).json({ token });
+        res.status(200).json({
+            token,
+            user: {
+                id: foundUser.id,
+                dni: foundUser.dni,
+                role: foundUser.role,
+            },
+        });
     }
     catch (error) {
         res.status(500).json({ error: error.message });

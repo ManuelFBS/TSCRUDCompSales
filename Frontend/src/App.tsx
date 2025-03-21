@@ -14,21 +14,21 @@ function App() {
                     path="/login"
                     element={<LoginPage />}
                 />
+
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <DashboardPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="*"
+                    element={<h1>Not Found...!</h1>}
+                />
             </Routes>
-
-            <Route
-                path="/dashboard"
-                element={
-                    <ProtectedRoute>
-                        <DashboardPage />
-                    </ProtectedRoute>
-                }
-            />
-
-            <Route
-                path="*"
-                element={<h1>Not Found...!</h1>}
-            />
         </Router>
     );
 }
