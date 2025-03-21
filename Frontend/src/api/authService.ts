@@ -5,19 +5,19 @@ interface LoginData {
     password: string;
 }
 
-interface LoginResponse {
-    token: string;
-}
+// interface LoginResponse {
+//     token: string;
+// }
 
 // ~ Login...
 export const login = async (
     data: LoginData,
 ): Promise<{
-    token: LoginResponse;
+    token: string;
     user: { id: number; dni: string; role: string };
 }> => {
     const response = await apiClient.post<{
-        token: LoginResponse;
+        token: string;
         user: { id: number; dni: string; role: string };
     }>('/auth/login', data);
 
