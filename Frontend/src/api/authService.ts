@@ -1,4 +1,3 @@
-import apliClient from './apiClient';
 import apiClient from './apiClient';
 
 interface LoginData {
@@ -13,11 +12,14 @@ interface LoginResponse {
 // ~ Login...
 export const login = async (
     data: LoginData,
-): Promise<LoginResponse> => {
-    const response = await apliClient.post(
-        '/auth/login',
-        data,
-    );
+): Promise<{
+    token: LoginResponse;
+    user: { id: number; dni: string; role: string };
+}> => {
+    const response = await apiClient.post<{
+        token: LoginResponse;
+        user: { id: number; dni: string; role: string };
+    }>('/auth/login', data);
 
     return response.data;
 };
