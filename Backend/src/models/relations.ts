@@ -9,6 +9,7 @@ import Customer from './customers/Customer';
 import Purchases from './purchases/Purchases';
 import PurchaseDetail from './purchases/PurchaseDetail';
 import Supplier from './suppliers/Supplier';
+import Session from './sessions/Session';
 import BlacklistedToken from './tokens/BlacklistedToken';
 
 // ~ Relación Employee - User...
@@ -21,6 +22,16 @@ User.belongsTo(Employee, {
     foreignKey: 'dni',
     targetKey: 'dni',
     as: 'employee',
+});
+
+// ~ Relación User - Session...
+User.hasMany(Session, {
+    foreignKey: 'dni',
+    as: 'session',
+});
+Session.belongsTo(User, {
+    foreignKey: 'dni',
+    as: 'user',
 });
 
 // ~ Relación Employee - EmployeeStatus...
@@ -125,5 +136,6 @@ export {
     Purchases,
     Supplier,
     PurchaseDetail,
+    Session,
     BlacklistedToken,
 };

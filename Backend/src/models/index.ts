@@ -11,6 +11,7 @@ import {
     Purchases,
     Supplier,
     PurchaseDetail,
+    Session,
     BlacklistedToken,
 } from './relations';
 import dotenv from 'dotenv';
@@ -40,6 +41,7 @@ const models = {
     Purchases,
     Supplier,
     PurchaseDetail,
+    Session,
     BlacklistedToken,
     sequelize,
 };
