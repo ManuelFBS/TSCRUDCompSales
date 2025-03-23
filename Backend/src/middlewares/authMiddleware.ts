@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config/auth';
-import model from '../models';
 import models from '../models';
 
 const { BlacklistedToken } = models;
