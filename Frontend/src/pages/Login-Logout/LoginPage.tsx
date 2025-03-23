@@ -13,12 +13,16 @@ export const LoginPage = () => {
         e.preventDefault();
 
         try {
-            const { token, user: userData } = await login({
+            const {
+                token,
+                user: userData,
+                fullName,
+            } = await login({
                 user,
                 password,
             });
 
-            setAuth(token, userData);
+            setAuth(token, userData, fullName);
             navigate('/dashboard');
         } catch (error) {
             alert(`Login failed... Error: ${error}`);
