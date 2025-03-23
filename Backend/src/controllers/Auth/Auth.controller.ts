@@ -7,7 +7,7 @@ import {
     JWT_EXPIRES_IN,
 } from '../../config/auth';
 
-const { BlacklistedToken, User } = models;
+const { BlacklistedToken, User, Session } = models;
 
 export const login = async (
     req: Request,
@@ -51,6 +51,14 @@ export const login = async (
             } as jwt.SignOptions, // > Forzar el tipo de expiresIn...
         );
 
+        // * Se registra la sesión de inicio...
+        await Session.create({
+            dni: foundUser.dni,
+            user: foundUser.user,
+            role: foundUser.role,
+            sessionInit: new Date(),
+        });
+
         // * Se envía el token de respuesta...
         res.status(200).json({
             token,
@@ -78,6 +86,25 @@ export const logout = async (
             return res
                 .status(400)
                 .json({ error: 'No token provided' });
+        }
+
+        // * Decodificar el token para obtener el DNI del usuario...
+        const decoded = jwt.verify(token, JWT_SECRET) as {
+            dni: string;
+        };
+
+        // * Se busca la sesión activa del usuario...
+        const activeSession = await Session.findOne({
+            where: {
+                dni: decoded.dni,
+                sessionEnd: null,
+            },
+        });
+
+        if (activeSession) {
+            // > Registrar la hora de cierre de la sesión...
+            activeSession.sessionEnd = new Date();
+            await activeSession.save();
         }
 
         // * Agregar el token a la lista negra...

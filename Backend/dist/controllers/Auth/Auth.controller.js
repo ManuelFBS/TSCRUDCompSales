@@ -17,7 +17,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const authUtils_1 = require("../../utils/authUtils");
 const models_1 = __importDefault(require("../../models"));
 const auth_1 = require("../../config/auth");
-const { BlacklistedToken, User } = models_1.default;
+const { BlacklistedToken, User, Session } = models_1.default;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { user, password } = req.body;
@@ -45,6 +45,13 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }, auth_1.JWT_SECRET, {
             expiresIn: auth_1.JWT_EXPIRES_IN,
         });
+        // * Se registra la sesión de inicio...
+        yield Session.create({
+            dni: foundUser.dni,
+            user: foundUser.user,
+            role: foundUser.role,
+            sessionInit: new Date(),
+        });
         // * Se envía el token de respuesta...
         res.status(200).json({
             token,
@@ -69,6 +76,20 @@ const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res
                 .status(400)
                 .json({ error: 'No token provided' });
+        }
+        // * Decodificar el token para obtener el DNI del usuario...
+        const decoded = jsonwebtoken_1.default.verify(token, auth_1.JWT_SECRET);
+        // * Se busca la sesión activa del usuario...
+        const activeSession = yield Session.findOne({
+            where: {
+                dni: decoded.dni,
+                sessionEnd: null,
+            },
+        });
+        if (activeSession) {
+            // > Registrar la hora de cierre de la sesión...
+            activeSession.sessionEnd = new Date();
+            yield activeSession.save();
         }
         // * Agregar el token a la lista negra...
         yield BlacklistedToken.create({ token });

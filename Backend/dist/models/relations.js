@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BlacklistedToken = exports.PurchaseDetail = exports.Supplier = exports.Purchases = exports.SalesDetail = exports.Customer = exports.Sales = exports.ProductInventory = exports.Department = exports.EmployeeStatus = exports.User = exports.Employee = void 0;
+exports.BlacklistedToken = exports.Session = exports.PurchaseDetail = exports.Supplier = exports.Purchases = exports.SalesDetail = exports.Customer = exports.Sales = exports.ProductInventory = exports.Department = exports.EmployeeStatus = exports.User = exports.Employee = void 0;
 const Employee_1 = __importDefault(require("./employees/Employee"));
 exports.Employee = Employee_1.default;
 const User_1 = __importDefault(require("./users/User"));
@@ -26,6 +26,8 @@ const PurchaseDetail_1 = __importDefault(require("./purchases/PurchaseDetail"));
 exports.PurchaseDetail = PurchaseDetail_1.default;
 const Supplier_1 = __importDefault(require("./suppliers/Supplier"));
 exports.Supplier = Supplier_1.default;
+const Session_1 = __importDefault(require("./sessions/Session"));
+exports.Session = Session_1.default;
 const BlacklistedToken_1 = __importDefault(require("./tokens/BlacklistedToken"));
 exports.BlacklistedToken = BlacklistedToken_1.default;
 // ~ Relación Employee - User...
@@ -38,6 +40,17 @@ User_1.default.belongsTo(Employee_1.default, {
     foreignKey: 'dni',
     targetKey: 'dni',
     as: 'employee',
+});
+// ~ Relación User - Session...
+User_1.default.hasMany(Session_1.default, {
+    foreignKey: 'dni',
+    sourceKey: 'dni',
+    as: 'session',
+});
+Session_1.default.belongsTo(User_1.default, {
+    foreignKey: 'dni',
+    targetKey: 'dni',
+    as: 'sessionUser',
 });
 // ~ Relación Employee - EmployeeStatus...
 Employee_1.default.hasOne(EmployeeStatus_1.default, {

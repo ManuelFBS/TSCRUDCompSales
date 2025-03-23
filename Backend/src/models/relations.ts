@@ -27,11 +27,13 @@ User.belongsTo(Employee, {
 // ~ Relación User - Session...
 User.hasMany(Session, {
     foreignKey: 'dni',
+    sourceKey: 'dni',
     as: 'session',
 });
 Session.belongsTo(User, {
     foreignKey: 'dni',
-    as: 'user',
+    targetKey: 'dni',
+    as: 'sessionUser',
 });
 
 // ~ Relación Employee - EmployeeStatus...

@@ -24,6 +24,7 @@ const models = {
     Purchases: relations_1.Purchases,
     Supplier: relations_1.Supplier,
     PurchaseDetail: relations_1.PurchaseDetail,
+    Session: relations_1.Session,
     BlacklistedToken: relations_1.BlacklistedToken,
     sequelize,
 };
