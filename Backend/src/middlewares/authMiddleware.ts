@@ -5,7 +5,7 @@ import models from '../models';
 
 const { BlacklistedToken } = models;
 
-// Extend Request type to include user property
+// ~ Extend Request type to include user property...
 interface AuthRequest extends Request {
     user?: {
         id: number;

@@ -17,7 +17,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const authUtils_1 = require("../../utils/authUtils");
 const models_1 = __importDefault(require("../../models"));
 const auth_1 = require("../../config/auth");
-const { BlacklistedToken, User, Session } = models_1.default;
+const { BlacklistedToken, Employee, User, Session } = models_1.default;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { user, password } = req.body;
@@ -30,6 +30,11 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 .status(404)
                 .json({ error: 'User not found...!' });
         }
+        // * Se obtiene datos puntuales del empleado asociado con el usuario...
+        const employee = yield Employee.findOne({
+            where: { dni: foundUser.dni },
+            attributes: ['name', 'lastName'],
+        });
         // * Se verifica el password...
         const isPasswordValid = yield (0, authUtils_1.ComparePassword)(password, foundUser.password);
         if (!isPasswordValid) {
@@ -60,6 +65,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 dni: foundUser.dni,
                 role: foundUser.role,
             },
+            fullName: (employee === null || employee === void 0 ? void 0 : employee.name) + ' ' + (employee === null || employee === void 0 ? void 0 : employee.lastName),
         });
     }
     catch (error) {

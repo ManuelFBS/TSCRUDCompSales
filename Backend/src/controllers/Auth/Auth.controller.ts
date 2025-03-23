@@ -7,7 +7,8 @@ import {
     JWT_EXPIRES_IN,
 } from '../../config/auth';
 
-const { BlacklistedToken, User, Session } = models;
+const { BlacklistedToken, Employee, User, Session } =
+    models;
 
 export const login = async (
     req: Request,
@@ -26,6 +27,12 @@ export const login = async (
                 .status(404)
                 .json({ error: 'User not found...!' });
         }
+
+        // * Se obtiene datos puntuales del empleado asociado con el usuario...
+        const employee = await Employee.findOne({
+            where: { dni: foundUser.dni },
+            attributes: ['name', 'lastName'],
+        });
 
         // * Se verifica el password...
         const isPasswordValid = await ComparePassword(
@@ -68,6 +75,8 @@ export const login = async (
                 dni: foundUser.dni,
                 role: foundUser.role,
             },
+            fullName:
+                employee?.name + ' ' + employee?.lastName,
         });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
