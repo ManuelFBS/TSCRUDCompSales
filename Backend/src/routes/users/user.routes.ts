@@ -1,11 +1,15 @@
 import express from 'express';
 import {
+    authenticate,
+    authorize,
+} from '../../middlewares/authMiddleware';
+import {
     createUser,
     getUsers,
     getUserByIdDniUser,
     updateUser,
     deleteUser,
-} from '../../controllers/Users/users.controller';
+} from '../../controllers/users/users.controller';
 
 const userRouter = express.Router();
 
@@ -15,17 +19,37 @@ const asyncHandler =
         Promise.resolve(fn(req, res, next)).catch(next);
     };
 
-userRouter.post('/user/new', asyncHandler(createUser));
+// ~ Proteger todas las rutas de usuarios...
+userRouter.use(asyncHandler(authenticate));
 
-userRouter.get('/', getUsers);
+userRouter.post(
+    '/user/new',
+    asyncHandler(authorize(['Owner', 'Admin'])),
+    asyncHandler(createUser),
+);
+
+userRouter.get(
+    '/',
+    asyncHandler(authorize(['Owner', 'Admin'])),
+    getUsers,
+);
 
 userRouter.get(
     '/user/search/:id?',
+    asyncHandler(authorize(['Owner', 'Admin'])),
     asyncHandler(getUserByIdDniUser),
 );
 
-userRouter.patch('/user/edit/:id', updateUser);
+userRouter.patch(
+    '/user/edit/:id',
+    asyncHandler(authorize(['Owner', 'Admin'])),
+    updateUser,
+);
 
-userRouter.delete('/user/delete/:id?', deleteUser);
+userRouter.delete(
+    '/user/delete/:id?',
+    asyncHandler(authorize(['Owner', 'Admin'])),
+    deleteUser,
+);
 
 export { userRouter };
