@@ -9,8 +9,7 @@ import {
     getUserByIdDniUser,
     updateUser,
     deleteUser,
-} from '../../controllers/users/users.controller';
-
+} from '../../controllers/Users/users.controller';
 const userRouter = express.Router();
 
 // * Función wrapper para manejar promesas...

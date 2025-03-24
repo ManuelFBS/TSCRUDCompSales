@@ -3,8 +3,6 @@ import {
     login,
     logout,
 } from '../../controllers/Auth/Auth.controller';
-import exp from 'constants';
-import { log } from 'console';
 
 const authRouter = express.Router();
 

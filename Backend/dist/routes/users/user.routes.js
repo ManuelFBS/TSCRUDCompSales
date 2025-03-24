@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.userRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const authMiddleware_1 = require("../../middlewares/authMiddleware");
-const users_controller_1 = require("../../controllers/users/users.controller");
+const users_controller_1 = require("../../controllers/Users/users.controller");
 const userRouter = express_1.default.Router();
 exports.userRouter = userRouter;
 // * Función wrapper para manejar promesas...
