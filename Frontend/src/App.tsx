@@ -4,7 +4,11 @@ import {
     Route,
     Navigate,
 } from 'react-router-dom';
-import { LoginPage, DashboardPage } from './pages';
+import {
+    LandingPage,
+    LoginPage,
+    DashboardPage,
+} from './pages';
 import { ProtectedRoute } from './components/security/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
 
@@ -23,7 +27,7 @@ function App() {
                                 replace
                             />
                         ) : (
-                            <Navigate to="/login" replace />
+                            <LandingPage />
                         )
                     }
                 />
