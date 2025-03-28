@@ -45,3 +45,27 @@
 .custom-background {
     background-color: var(--background-dark);
 }
+
+/* ~Estilos para la Navbar lateral */
+.side-nav-link {
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    padding: 8px 12px;
+}
+
+.side-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.side-nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: 500;
+}
+
+/* ~Asegurar que el contenido principal ocupe el espacio restante */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}

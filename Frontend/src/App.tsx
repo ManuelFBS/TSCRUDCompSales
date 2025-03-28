@@ -11,6 +11,7 @@ import {
 } from './pages';
 import { ProtectedRoute } from './components/security/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
+import { AuthenticateLayout } from './layouts/AuthenticateLayout';
 
 function App() {
     const { token } = useAuthStore();
