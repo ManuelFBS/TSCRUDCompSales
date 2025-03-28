@@ -4,10 +4,10 @@ import { useAuthStore } from '../../store/authStore';
 
 export const SideNavbar = () => {
     const navigate = useNavigate();
-    const { logout } = useAuthStore();
+    const { logoutStore } = useAuthStore();
 
     const handleLogout = () => {
-        logout();
+        logoutStore();
         navigate('/login');
     };
 

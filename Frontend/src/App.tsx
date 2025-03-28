@@ -38,14 +38,16 @@ function App() {
                     element={<LoginPage />}
                 />
 
-                <Route
-                    path="/dashboard"
-                    element={
-                        <ProtectedRoute>
-                            <DashboardPage />
-                        </ProtectedRoute>
-                    }
-                />
+                <Route element={<AuthenticateLayout />}>
+                    <Route
+                        path="/dashboard"
+                        element={
+                            <ProtectedRoute>
+                                <DashboardPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                </Route>
 
                 <Route
                     path="*"
