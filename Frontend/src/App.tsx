@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 import {
     LandingPage,
+    BackgroundPage,
     LoginPage,
     DashboardPage,
 } from './pages';
@@ -22,9 +23,17 @@ function App() {
                 <Route
                     path="/"
                     element={
+                        // token ? (
+                        //     <Navigate
+                        //         to="/dashboard"
+                        //         replace
+                        //     />
+                        // ) : (
+                        //     <LandingPage />
+                        // )
                         token ? (
                             <Navigate
-                                to="/dashboard"
+                                to="/background"
                                 replace
                             />
                         ) : (
@@ -40,10 +49,16 @@ function App() {
 
                 <Route element={<AuthenticateLayout />}>
                     <Route
-                        path="/dashboard"
+                        // path="/dashboard"
+                        // element={
+                        //     <ProtectedRoute>
+                        //         <DashboardPage />
+                        //     </ProtectedRoute>
+                        // }
+                        path="/background"
                         element={
                             <ProtectedRoute>
-                                <DashboardPage />
+                                <BackgroundPage />
                             </ProtectedRoute>
                         }
                     />

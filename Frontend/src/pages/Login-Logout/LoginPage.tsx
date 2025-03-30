@@ -11,6 +11,7 @@ export const LoginPage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         try {
             const {
                 token,
@@ -18,7 +19,8 @@ export const LoginPage = () => {
                 fullName,
             } = await login({ user, password });
             setAuth(token, userData, fullName);
-            navigate('/dashboard');
+            // navigate('/dashboard');
+            navigate('/background');
         } catch (error) {
             alert(`Login failed... Error: ${error}`);
         }

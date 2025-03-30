@@ -17,13 +17,18 @@ export const LandingPage = () => {
                     className="text-center text-white p-4 rounded"
                     style={{
                         backgroundColor:
-                            'rgba(20,20,250,0.3)',
+                            'rgba(20,20,250,0.2)',
                     }}
                 >
                     <h1 className="display-10 mb-4">
                         Bienvenido a <br /> MTM-App 1.0
                     </h1>
-                    <p className="lead mb-4">
+                    <p
+                        className="lead mb-4"
+                        style={{
+                            color: 'rgba(100,100,255,1.0)',
+                        }}
+                    >
                         App diseñada para ventas y
                         adquisiciones <br />
                         de insumos electrónicos y otros...
