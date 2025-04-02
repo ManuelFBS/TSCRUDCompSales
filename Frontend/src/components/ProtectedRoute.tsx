@@ -1,12 +1,14 @@
+import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { JSX, use } from 'react';
+
+interface ProtectedRouteProps {
+    children: ReactNode;
+}
 
 const ProtectedRoute = ({
     children,
-}: {
-    children: JSX.Element;
-}) => {
+}: ProtectedRouteProps) => {
     const { token } = useAuthStore();
     const location = useLocation();
 
@@ -20,5 +22,7 @@ const ProtectedRoute = ({
         );
     }
 
-    return children;
+    return <>{children}</>;
 };
+
+export default ProtectedRoute;

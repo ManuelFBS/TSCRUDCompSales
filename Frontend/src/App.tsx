@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import Spinner from './components/Spinner';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
@@ -17,13 +17,19 @@ function App() {
                     path="/login"
                     element={<LoginPage />}
                 />
-                <Route element={<ProtectedRoute />}>
-                    <Route element={<MainLayout />}>
-                        <Route
-                            path="/dashboard"
-                            element={<Dashboard />}
-                        />
-                    </Route>
+                <Route
+                    element={
+                        <ProtectedRoute>
+                            <MainLayout>
+                                <Outlet />
+                            </MainLayout>
+                        </ProtectedRoute>
+                    }
+                >
+                    <Route
+                        path="/dashboard"
+                        element={<Dashboard />}
+                    />
                 </Route>
                 <Route path="*" element={<NotFound />} />
             </Routes>
