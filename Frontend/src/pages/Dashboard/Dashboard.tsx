@@ -8,7 +8,7 @@ import {
 import EmployeeSection from './components/EmployeeSection';
 import SupplierSection from './components/SupplierSection';
 import UserSection from './components/UserSection';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '../../store/authStore';
 import './Dashboard.css';
 
 const Dashboard = () => {

@@ -7,7 +7,7 @@ import {
     Alert,
 } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '../../store/authStore';
 import './LoginPage.css';
 
 const LoginPage = () => {

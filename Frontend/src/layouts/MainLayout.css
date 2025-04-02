@@ -7,7 +7,7 @@
 .main-content {
     flex: 1;
     padding: 20px;
-    background-image: url('../../public/logo.png');
+    background-image: url('/logo.png');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 50%;
