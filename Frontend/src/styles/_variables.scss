@@ -1,17 +1,17 @@
-// Variables de color
-$primary-blue: #1a73e8;
-$light-blue: #4285f4;
+// *Variables de color...
+$primary-blue: #2132a0;
+$light-blue: #315da5;
 $background-gray: #f8f9fa;
 $text-dark: #202124;
 $text-light: #5f6368;
 
-// Variables de layout
+// *Variables de layout...
 $sidebar-width: 250px;
 $header-height: 60px;
 
-// Sombras
+// *Sombras...
 $card-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 $sidebar-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
 
-// Gradientes
+// *Gradientes...
 $sidebar-gradient: linear-gradient(180deg, $primary-blue 0%, $light-blue 100%);

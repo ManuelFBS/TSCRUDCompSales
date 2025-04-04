@@ -2,6 +2,7 @@ import React from 'react';
 import { Nav } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { authApi } from '../../api/auth.api';
 import {
     FaUsers,
     FaUserTie,
@@ -11,12 +12,10 @@ import {
     FaTruck,
     FaSignOutAlt,
 } from 'react-icons/fa';
-import { authApi } from '../../api/auth.api';
 
 const Sidebar: React.FC = () => {
     const navigate = useNavigate();
-    const logout = useAuthStore((state) => state.logout);
-    const user = useAuthStore((state) => state.user);
+    const { logout, user } = useAuthStore();
 
     const handleLogout = async () => {
         try {
@@ -36,47 +35,43 @@ const Sidebar: React.FC = () => {
             </div>
 
             <Nav className="flex-column">
-                {/* Gestión de Personal */}
                 <div className="nav-section">
-                    <Nav.Link onClick={() => navigate('/employees')}>
-                        <FaUserTie /> Empleados
+                    <Nav.Link onClick={() => navigate('/dashboard/employees')}>
+                        <FaUserTie /> <span>Empleados</span>
                     </Nav.Link>
-                    <Nav.Link onClick={() => navigate('/users')}>
-                        <FaUsers /> Usuarios
+                    <Nav.Link onClick={() => navigate('/dashboard/users')}>
+                        <FaUsers /> <span>Usuarios</span>
                     </Nav.Link>
                 </div>
 
                 <div className="nav-divider" />
 
-                {/* Gestión de Ventas */}
                 <div className="nav-section">
-                    <Nav.Link onClick={() => navigate('/sales')}>
-                        <FaShoppingCart /> Ventas
+                    <Nav.Link onClick={() => navigate('/dashboard/sales')}>
+                        <FaShoppingCart /> <span>Ventas</span>
                     </Nav.Link>
-                    <Nav.Link onClick={() => navigate('/customers')}>
-                        <FaUserFriends /> Clientes
+                    <Nav.Link onClick={() => navigate('/dashboard/customers')}>
+                        <FaUserFriends /> <span>Clientes</span>
                     </Nav.Link>
                 </div>
 
                 <div className="nav-divider" />
 
-                {/* Gestión de Compras */}
                 <div className="nav-section">
-                    <Nav.Link onClick={() => navigate('/purchases')}>
-                        <FaBoxOpen /> Adquisiciones
+                    <Nav.Link onClick={() => navigate('/dashboard/purchases')}>
+                        <FaBoxOpen /> <span>Adquisiciones</span>
                     </Nav.Link>
-                    <Nav.Link onClick={() => navigate('/suppliers')}>
-                        <FaTruck /> Proveedores
+                    <Nav.Link onClick={() => navigate('/dashboard/suppliers')}>
+                        <FaTruck /> <span>Proveedores</span>
                     </Nav.Link>
                 </div>
+
+                <div className="nav-divider" />
+
+                <Nav.Link className="logout-link" onClick={handleLogout}>
+                    <FaSignOutAlt /> <span>Cerrar Sesión</span>
+                </Nav.Link>
             </Nav>
-
-            <div className="nav-divider" />
-
-            {/* Cerrar Sesión */}
-            <Nav.Link onClick={handleLogout} className="logout-link">
-                <FaSignOutAlt /> Cerrar Sesión
-            </Nav.Link>
         </div>
     );
 };

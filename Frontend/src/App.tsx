@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-// import { useAuthStore } from './store/authStore';
-import LandingPage from './page/LandingPage';
-import LoginPage from './page/LoginPage';
-import DashboardPage from './page/DasboardPage';
+import { useAuthStore } from './store/authStore';
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DasboardPage';
+import EmployeesPage from './pages/employees';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 const App: React.FC = () => {
