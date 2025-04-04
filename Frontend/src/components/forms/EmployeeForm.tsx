@@ -6,12 +6,14 @@ interface EmployeeFormProps {
     initialData?: Partial<EmployeeFormData>;
     onSubmit: (data: EmployeeFormData) => void;
     isLoading: boolean;
+    isEdit?: boolean;
 }
 
 const EmployeeForm: React.FC<EmployeeFormProps> = ({
     initialData,
     onSubmit,
     isLoading,
+    isEdit = false,
 }) => {
     const [formData, setFormData] = useState<EmployeeFormData>({
         dni: '',
@@ -51,7 +53,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                             value={formData.dni}
                             onChange={handleChange}
                             required
-                            disabled={!!initialData?.dni}
+                            disabled={!!initialData?.dni || isEdit}
                         />
                     </Form.Group>
                 </Col>

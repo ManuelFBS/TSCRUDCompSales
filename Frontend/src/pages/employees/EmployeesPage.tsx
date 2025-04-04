@@ -2,68 +2,70 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FaPlus } from 'react-icons/fa';
-import UserTable from '../components/tables/UserTable';
-import DeleteConfirmModal from '../components/modals/DeleteConfirmModal';
-import { User } from '../types/user.types';
-import { fetchUsers, deleteUser } from '../services/userService';
+import EmployeeTable from '../../components/tables/EmployeeTable';
+import DeleteConfirmModal from '../../components/modals/DeleteConfirmModal';
+import { Employee } from '../../types/employee.types';
+import { employeeApi } from '../../api/employee.api';
 
-const UsersPage: React.FC = () => {
+const EmployeesPage: React.FC = () => {
     const navigate = useNavigate();
-    const [users, setUsers] = useState<User[]>([]);
+    const [employees, setEmployees] = useState<Employee[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [userToDelete, setUserToDelete] = useState<string | null>(null);
+    const [employeeToDelete, setEmployeeToDelete] = useState<string | null>(
+        null,
+    );
 
-    const loadUsers = async () => {
+    const loadEmployees = async () => {
         try {
             setIsLoading(true);
             setError(null);
-            const data = await fetchUsers();
-            setUsers(data);
+            const data = await employeeApi.getAll();
+            setEmployees(data);
         } catch (err) {
             setError(
-                'Error al cargar los usuarios. Por favor, intente nuevamente.',
+                'Error al cargar los empleados. Por favor, intente nuevamente.',
             );
-            console.error('Error loading users:', err);
+            console.error('Error loading employees:', err);
         } finally {
             setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        loadUsers();
+        loadEmployees();
     }, []);
 
     const handleCreateClick = () => {
-        navigate('create');
+        navigate('/create');
     };
 
-    const handleEditClick = (user: User) => {
-        navigate(`edit/${user.dni}`);
+    const handleEditClick = (employee: Employee) => {
+        navigate(`edit/${employee.dni}`);
     };
 
-    const handleDeleteClick = (userId: string) => {
-        setUserToDelete(userId);
+    const handleDeleteClick = (employeeId: string) => {
+        setEmployeeToDelete(employeeId);
         setShowDeleteModal(true);
     };
 
     const handleDeleteConfirm = async () => {
-        if (!userToDelete) return;
+        if (!employeeToDelete) return;
 
         try {
             setIsLoading(true);
-            await deleteUser(userToDelete);
-            await loadUsers(); // Recargar la lista
+            await employeeApi.delete(employeeToDelete);
+            await loadEmployees(); // Recargar la lista
             setShowDeleteModal(false);
         } catch (err) {
             setError(
-                'Error al eliminar el usuario. Por favor, intente nuevamente.',
+                'Error al eliminar el empleado. Por favor, intente nuevamente.',
             );
-            console.error('Error deleting user:', err);
+            console.error('Error deleting employee:', err);
         } finally {
             setIsLoading(false);
-            setUserToDelete(null);
+            setEmployeeToDelete(null);
         }
     };
 
@@ -72,14 +74,14 @@ const UsersPage: React.FC = () => {
             <Row className="mb-4">
                 <Col>
                     <div className="d-flex justify-content-between align-items-center">
-                        <h1>Usuarios</h1>
+                        <h1>Empleados</h1>
                         <Button
                             variant="primary"
                             onClick={handleCreateClick}
                             disabled={isLoading}
                         >
                             <FaPlus className="me-2" />
-                            Nuevo Usuario
+                            Nuevo Empleado
                         </Button>
                     </div>
                 </Col>
@@ -95,8 +97,8 @@ const UsersPage: React.FC = () => {
 
             <Row>
                 <Col>
-                    <UserTable
-                        users={users}
+                    <EmployeeTable
+                        employees={employees}
                         onEdit={handleEditClick}
                         onDelete={handleDeleteClick}
                         isLoading={isLoading}
@@ -109,11 +111,11 @@ const UsersPage: React.FC = () => {
                 onHide={() => setShowDeleteModal(false)}
                 onConfirm={handleDeleteConfirm}
                 isLoading={isLoading}
-                title="Eliminar Usuario"
-                message="¿Está seguro que desea eliminar este usuario? Esta acción no se puede deshacer."
+                title="Eliminar Empleado"
+                message="¿Está seguro que desea eliminar este empleado? Esta acción no se puede deshacer."
             />
         </Container>
     );
 };
 
-export default UsersPage;
+export default EmployeesPage;

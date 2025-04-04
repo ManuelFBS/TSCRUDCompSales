@@ -1,8 +1,8 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
 import { Outlet } from 'react-router-dom';
-import Sidebar from '../components/common/Navbar';
-import { useAuthStore } from '../store/authStore';
+import Sidebar from '../../components/common/Navbar';
+import { useAuthStore } from '../../store/authStore';
 
 const DashboardPage: React.FC = () => {
     const user = useAuthStore((state) => state.user);
