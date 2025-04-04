@@ -1,0 +1,155 @@
+@import "variables";
+@import "~bootstrap/scss/bootstrap";
+
+.landing-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url("../assets/images/logo.png") center/contain no-repeat;
+  background-color: #f8f9fa;
+
+  .landing-content {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+
+    .landing-logo {
+      max-width: 200px;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: #0d6efd;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: #6c757d;
+      margin-bottom: 2rem;
+    }
+  }
+}
+
+// Estilos para el Login
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url("../assets/images/logo.png") center/30% no-repeat;
+  background-color: $background-gray;
+
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: $card-shadow;
+
+    .login-logo {
+      width: 120px;
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+// Estilos para el Dashboard
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+
+  .sidebar {
+    width: $sidebar-width;
+    background: $sidebar-gradient;
+    color: white;
+    padding: 1rem;
+    box-shadow: $sidebar-shadow;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+
+    .sidebar-header {
+      padding: 1rem 0;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 1rem;
+
+      h3 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      p {
+        margin: 0.5rem 0 0;
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+    }
+
+    .nav-section {
+      margin: 0.5rem 0;
+
+      .nav-link {
+        color: white;
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 4px;
+        }
+
+        svg {
+          font-size: 1.2rem;
+        }
+      }
+    }
+
+    .nav-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 1rem 0;
+    }
+
+    .logout-link {
+      margin-top: auto;
+      color: white;
+      opacity: 0.8;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .dashboard-content {
+    flex: 1;
+    margin-left: $sidebar-width;
+    padding: 2rem;
+    background: url("../assets/images/logo.png") center/contain no-repeat;
+    background-color: $background-gray;
+    min-height: 100vh;
+
+    .welcome-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: $card-shadow;
+      margin-bottom: 2rem;
+
+      h1 {
+        color: $text-dark;
+        margin: 0;
+      }
+
+      p {
+        color: $text-light;
+        margin: 0.5rem 0 0;
+      }
+    }
+  }
+}
