@@ -40,7 +40,25 @@ app.use((req, res, next) => {
 //
 app.use(cookieParser());
 app.use(morgan('dev'));
-app.use(cors());
+app.use(
+    cors({
+        origin: 'http://localhost:5173', // >URL de tu frontend...
+        credentials: true, // >Importante para las cookies...
+        methods: [
+            'GET',
+            'POST',
+            'PUT',
+            'DELETE',
+            'PATCH',
+            'OPTIONS',
+        ],
+        allowedHeaders: [
+            'Content-Type',
+            'Authorization',
+            'X-CSRF-TOKEN',
+        ],
+    }),
+);
 app.use(express.json());
 app.use(express.static('public'));
 // app.use(errorHandler);
