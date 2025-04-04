@@ -5,6 +5,9 @@ const baseURL = 'http://localhost:3001/api';
 const axiosInstance = axios.create({
     baseURL,
     withCredentials: true, // > Muy importante para las cookies CSRF...
+    headers: {
+        'Content-Type': 'application/json',
+    },
 });
 
 // ~Interceptor para manejar el token CSRF...
