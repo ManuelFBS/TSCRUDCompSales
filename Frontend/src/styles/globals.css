@@ -1,0 +1,29 @@
+/* Importar Bootstrap */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Estilos para el fondo con marca de agua */
+.watermark-background {
+    position: relative;
+    min-height: 100vh;
+}
+
+.watermark-background::before {
+    content: '';
+    background-image: url('../assets/logo.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50%;
+    opacity: 0.1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+}
