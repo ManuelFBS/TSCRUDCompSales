@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8585/api', // Ajusta según tu puerto del backend
+    baseURL: 'http://localhost:3001/api', // Ajusta según tu puerto del backend
     withCredentials: true, // Importante para CSRF y cookies
 });
 
