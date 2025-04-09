@@ -1,0 +1,48 @@
+.navbar {
+    background: linear-gradient(
+        to bottom,
+        var(--primary-dark),
+        var(--primary-medium)
+    );
+    width: 250px;
+    min-height: 100vh;
+    color: white;
+    padding: 0;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+}
+
+.navbarToggle {
+    display: none;
+    margin: 10px;
+}
+
+.offcanvas {
+    width: 250px !important;
+}
+
+@media (max-width: 992px) {
+    .navbar {
+        width: 100%;
+        min-height: auto;
+        flex-direction: row !important;
+    }
+
+    .navbarToggle {
+        display: block;
+    }
+
+    .offcanvas {
+        background: linear-gradient(
+            to bottom,
+            var(--primary-dark),
+            var(--primary-medium)
+        );
+        color: white;
+    }
+}
