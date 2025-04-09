@@ -7,7 +7,7 @@ import MainLayout from './layouts/MainLayout';
 import { useAuthStore } from './store/authStore';
 import { JSX } from 'react/jsx-runtime';
 import EmployeesPage from './pages/Dashboard/components/Employees/EmployeesPage';
-// import UsersPage from './pages/Dashboard/components/Users/UsersPage';
+import UsersPage from './pages/Dashboard/components/Users/UsersPage';
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
     const { isAuthenticated } = useAuthStore();
@@ -51,7 +51,7 @@ const App = () => {
                 >
                     <Route index element={<Dashboard />} />
                     <Route path="employees" element={<EmployeesPage />} />
-                    {/* <Route path="users" element={<UsersPage />} /> */}
+                    <Route path="users" element={<UsersPage />} />
                 </Route>
 
                 <Route path="*" element={<Navigate to="/" />} />

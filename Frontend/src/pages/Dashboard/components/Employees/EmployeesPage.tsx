@@ -12,6 +12,7 @@ import api from '../../../../api/api';
 import { useAuthStore } from '../../../../store/authStore';
 
 const EmployeesPage = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [employees, setEmployees] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);

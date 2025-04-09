@@ -27,6 +27,8 @@ const LoginPage = () => {
 
             login(token, user);
             navigate('/dashboard');
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             setError(err.response?.data?.error || 'Error al iniciar sesión');
         } finally {
