@@ -33,7 +33,7 @@ const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
             if (!formattedBirthDate) {
                 return res.status(400).json({
                     error: 'Fecha de nacimiento inválida',
-                    message: 'Por favor, use el formato DD/MM/YYYY',
+                    message: 'Por favor, use el formato DD-MM-YYYY',
                 });
             }
             const newEmployee = yield Employee.create({

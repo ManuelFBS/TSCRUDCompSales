@@ -33,7 +33,7 @@ export const createEmployee = async (
                 return res.status(400).json({
                     error: 'Fecha de nacimiento inválida',
                     message:
-                        'Por favor, use el formato DD/MM/YYYY',
+                        'Por favor, use el formato DD-MM-YYYY',
                 });
             }
 
