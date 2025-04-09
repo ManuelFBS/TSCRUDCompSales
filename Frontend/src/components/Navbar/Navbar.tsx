@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-// import { Nav, Navbar as BSNavbar, Button, Offcanvas } from 'react-bootstrap';
+// ?import { Nav, Navbar as BSNavbar, Button, Offcanvas } from 'react-bootstrap';
 import { Nav, Navbar as BSNavbar, Offcanvas } from 'react-bootstrap';
 import {
     FaUser,
     FaUsers,
-    // FaBoxes,
+    // ?FaBoxes,
     FaSignOutAlt,
     FaHome,
     FaShoppingCart,
@@ -17,12 +17,18 @@ import styles from './styles.module.css';
 const Navbar = () => {
     const [show, setShow] = useState(false);
     const navigate = useNavigate();
-    // const { logout, user, hasRole } = useAuthStore();
+    // ?const { logout, user, hasRole } = useAuthStore();
     const { logout, hasRole } = useAuthStore();
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/login');
+        } catch (error) {
+            console.error('Logout failed:', error);
+            // *Forzar logout aunque falle la llamada al backend
+            navigate('/login');
+        }
     };
 
     const handleNavigate = (path: string) => {

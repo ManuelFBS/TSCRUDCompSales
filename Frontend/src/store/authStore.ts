@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import api from '../api/api';
 
 interface AuthState {
     token: string | null;
@@ -12,7 +13,7 @@ interface AuthState {
         token: string,
         user: { id: number; dni: string; role: string },
     ) => void;
-    logout: () => void;
+    logout: () => Promise<void>;
     isAuthenticated: () => boolean;
     hasRole: (role: string) => boolean;
 }
@@ -26,9 +27,17 @@ export const useAuthStore = create<AuthState>()(
                 set({ token, user });
                 localStorage.setItem('token', token);
             },
-            logout: () => {
-                set({ token: null, user: null });
-                localStorage.removeItem('token');
+            logout: async () => {
+                try {
+                    // *Llamar al endpoint de logout en el backend...
+                    await api.post('/auth/logout');
+                } catch (error) {
+                    console.error('Error during logout: ', error);
+                } finally {
+                    // *Limpiar el estado independientemente del resultado...
+                    set({ token: null, user: null });
+                    localStorage.removeItem('token');
+                }
             },
             isAuthenticated: () => !!get().token,
             hasRole: (role) => {
