@@ -17,6 +17,36 @@
     cursor: pointer;
 }
 
+.menuItem {
+    color: var(--menu-text-color) !important;
+    padding: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.menuItem:hover {
+    color: var(--menu-hover-color) !important;
+}
+
+.menuIcon {
+    margin-right: 0.5rem;
+    color: inherit;
+}
+
+.menuCloseSession {
+    color: var(--other-warning) !important;
+    padding: 0.5rem;
+    transition: color 0.3 ease;
+}
+
+.menuCloseSession:hover {
+    color: var(--other-hover-warning) !important;
+}
+
+.menuCloseSessionIcon {
+    margin-right: 0.5rem;
+    color: inherit;
+}
+
 .navbarToggle {
     display: none;
     margin: 10px;
@@ -24,6 +54,10 @@
 
 .offcanvas {
     width: 250px !important;
+}
+
+.offcanvasTitle {
+    color: var(--menu-text-color) !important;
 }
 
 @media (max-width: 992px) {

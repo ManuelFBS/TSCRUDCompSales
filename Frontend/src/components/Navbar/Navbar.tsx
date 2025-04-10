@@ -63,7 +63,10 @@ const Navbar = () => {
                     className={styles.offcanvas}
                 >
                     <Offcanvas.Header closeButton>
-                        <Offcanvas.Title id="offcanvasNavbarLabel">
+                        <Offcanvas.Title
+                            id="offcanvasNavbarLabel"
+                            className={styles.offcanvasTittle}
+                        >
                             Menú
                         </Offcanvas.Title>
                     </Offcanvas.Header>
@@ -75,8 +78,12 @@ const Navbar = () => {
                                         onClick={() =>
                                             handleNavigate('/dashboard')
                                         }
+                                        className={styles.menuItem}
                                     >
-                                        <FaHome className="me-2" /> Dashboard
+                                        <FaHome
+                                            className={`${styles.menuIcon} me-2`}
+                                        />{' '}
+                                        Dashboard
                                     </Nav.Link>
                                 </Nav.Item>
                             )}
@@ -86,8 +93,12 @@ const Navbar = () => {
                                     onClick={() =>
                                         handleNavigate('/dashboard/employees')
                                     }
+                                    className={styles.menuItem}
                                 >
-                                    <FaUsers className="me-2" /> Empleados
+                                    <FaUsers
+                                        className={`${styles.menuIcon} me-2`}
+                                    />{' '}
+                                    Empleados
                                 </Nav.Link>
                             </Nav.Item>
 
@@ -96,8 +107,12 @@ const Navbar = () => {
                                     onClick={() =>
                                         handleNavigate('/dashboard/users')
                                     }
+                                    className={styles.menuItem}
                                 >
-                                    <FaUser className="me-2" /> Usuarios
+                                    <FaUser
+                                        className={`${styles.menuIcon} me-2`}
+                                    />{' '}
+                                    Usuarios
                                 </Nav.Link>
                             </Nav.Item>
 
@@ -105,7 +120,10 @@ const Navbar = () => {
 
                             <Nav.Item>
                                 <Nav.Link disabled>
-                                    <FaShoppingCart className="me-2" /> Ventas
+                                    <FaShoppingCart
+                                        className={`${styles.menuIcon} me-2`}
+                                    />{' '}
+                                    Ventas
                                 </Nav.Link>
                             </Nav.Item>
 
@@ -118,9 +136,14 @@ const Navbar = () => {
                             <hr />
 
                             <Nav.Item>
-                                <Nav.Link onClick={handleLogout}>
-                                    <FaSignOutAlt className="me-2" /> Cerrar
-                                    Sesión
+                                <Nav.Link
+                                    onClick={handleLogout}
+                                    className={styles.menuCloseSession}
+                                >
+                                    <FaSignOutAlt
+                                        className={`${styles.menuCloseSessionIcon} me-2`}
+                                    />{' '}
+                                    Cerrar Sesión
                                 </Nav.Link>
                             </Nav.Item>
                         </Nav>
