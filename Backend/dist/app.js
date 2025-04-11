@@ -78,6 +78,8 @@ app.get('/api', (req, res) => {
 // * Routes...
 app.use('/api/auth', index_1.authRouter);
 app.use('/api/employees', index_1.employeeRouter);
+app.use('/api/departments', index_1.departmentRouter);
+app.use('/api/employee-status', index_1.employeeStatusRouter);
 app.use('/api/users', index_1.userRouter);
 app.use('/api/suppliers', index_1.supplierRouter);
 app.use('/api/customers', index_1.customerRouter);

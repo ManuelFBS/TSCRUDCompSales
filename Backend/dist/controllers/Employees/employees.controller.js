@@ -23,8 +23,9 @@ const relations_1 = require("../../models/relations");
 const { Employee, Department, EmployeeStatus } = models_1.default;
 // ~Helper para obtener empleado con toda su información...
 const getFullEmployeeData = (dni) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Dni solicitado: ', dni);
     const employee = yield Employee.findOne({
-        where: { dni },
+        where: { dni }, // Corregido: El where debe ser un objeto con la propiedad dni
     });
     //
     if (!employee)
@@ -152,10 +153,12 @@ const getEmployees = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getEmployees = getEmployees;
+//
 // ~Se obtienen un empleado determinado...
 const getEmployeeByIdDni = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const whereClause = (0, employee_helper_1.buildEmployeeWhereClause)(req);
+        const { dni } = whereClause;
         if (!whereClause) {
             return res.status(400).json({
                 error: 'You must provide either an id or a dni',
@@ -164,7 +167,7 @@ const getEmployeeByIdDni = (req, res) => __awaiter(void 0, void 0, void 0, funct
         // !const employee = await Employee.findOne({
         //  !   where: whereClause,
         // !});
-        const fullEmployeeData = yield getFullEmployeeData(req.params.dni);
+        const fullEmployeeData = yield getFullEmployeeData(dni);
         if (fullEmployeeData) {
             res.status(200).json(fullEmployeeData);
         }

@@ -11,8 +11,9 @@ const { Employee, Department, EmployeeStatus } = models;
 
 // ~Helper para obtener empleado con toda su información...
 const getFullEmployeeData = async (dni: string) => {
+    console.log('Dni solicitado: ', dni);
     const employee = await Employee.findOne({
-        where: { dni },
+        where: { dni }, // Corregido: El where debe ser un objeto con la propiedad dni
     });
     //
     if (!employee) return null;
@@ -196,13 +197,20 @@ export const getEmployees = async (
     }
 };
 
+interface EmployeeWhereClause {
+    dni?: string;
+    id?: number;
+}
+//
 // ~Se obtienen un empleado determinado...
 export const getEmployeeByIdDni = async (
     req: Request,
     res: Response,
 ) => {
     try {
-        const whereClause = buildEmployeeWhereClause(req);
+        const whereClause: EmployeeWhereClause | any =
+            buildEmployeeWhereClause(req);
+        const { dni } = whereClause;
 
         if (!whereClause) {
             return res.status(400).json({
@@ -214,9 +222,8 @@ export const getEmployeeByIdDni = async (
         //  !   where: whereClause,
         // !});
 
-        const fullEmployeeData = await getFullEmployeeData(
-            req.params.dni,
-        );
+        const fullEmployeeData =
+            await getFullEmployeeData(dni);
 
         if (fullEmployeeData) {
             res.status(200).json(fullEmployeeData);

@@ -12,6 +12,8 @@ import morgan from 'morgan';
 import {
     authRouter,
     employeeRouter,
+    departmentRouter,
+    employeeStatusRouter,
     userRouter,
     supplierRouter,
     customerRouter,
@@ -88,6 +90,8 @@ app.get('/api', (req: Request, res: Response) => {
 // * Routes...
 app.use('/api/auth', authRouter);
 app.use('/api/employees', employeeRouter);
+app.use('/api/departments', departmentRouter);
+app.use('/api/employee-status', employeeStatusRouter);
 app.use('/api/users', userRouter);
 app.use('/api/suppliers', supplierRouter);
 app.use('/api/customers', customerRouter);
