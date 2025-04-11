@@ -7,7 +7,7 @@ import {
     registerCustomer,
     getAllCustomers,
     getCustomerByIdDni,
-} from '../../controllers/customers/customers.controller';
+} from '../../controllers/Customers/customers.controller';
 
 const customerRouter = express.Router();
 

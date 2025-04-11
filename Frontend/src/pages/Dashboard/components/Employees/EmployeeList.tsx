@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Table, Container, Button, Spinner, Alert } from 'react-bootstrap';
 import { useEmployeeStore } from '../../../../store/employeeStore';

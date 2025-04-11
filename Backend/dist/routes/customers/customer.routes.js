@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.customerRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const authMiddleware_1 = require("../../middlewares/authMiddleware");
-const customers_controller_1 = require("../../controllers/customers/customers.controller");
+const customers_controller_1 = require("../../controllers/Customers/customers.controller");
 const customerRouter = express_1.default.Router();
 exports.customerRouter = customerRouter;
 const asyncHandler = (fn) => (req, res, next) => {
