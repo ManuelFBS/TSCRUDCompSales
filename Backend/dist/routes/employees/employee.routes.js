@@ -5,11 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.employeeRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const authMiddleware_1 = require("../../middlewares/authMiddleware");
 const employees_controller_1 = require("../../controllers/Employees/employees.controller");
+const authMiddleware_1 = require("../../middlewares/authMiddleware");
 const employeeRouter = express_1.default.Router();
 exports.employeeRouter = employeeRouter;
-// * Función wrapper para manejar promesas...
+// *Función wrapper para manejar promesas...
 const asyncHandler = (fn) => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
 };
