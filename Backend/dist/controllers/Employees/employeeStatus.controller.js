@@ -12,11 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateDepartment = exports.getDepartmentByDni = void 0;
+exports.updateEmployeeStatus = exports.getEmployeeStatusByDni = void 0;
 const models_1 = __importDefault(require("../../models"));
 const employee_helper_1 = require("../../helpers/employee.helper");
-const { Department } = models_1.default;
-const getDepartmentByDni = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const { EmployeeStatus } = models_1.default;
+const getEmployeeStatusByDni = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const whereClause = (0, employee_helper_1.buildEmployeeWhereClause)(req);
         if (!whereClause) {
@@ -24,15 +24,15 @@ const getDepartmentByDni = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 error: 'You must provide either an id or a dni',
             });
         }
-        const department = yield Department.findOne({
+        const status = yield EmployeeStatus.findOne({
             where: whereClause,
         });
-        if (department) {
-            res.status(200).json(department);
+        if (status) {
+            res.status(200).json(status);
         }
         else {
             res.status(404).json({
-                error: 'Department not found for this employee',
+                error: 'Employee status not found for this employee',
             });
         }
     }
@@ -40,8 +40,8 @@ const getDepartmentByDni = (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(500).json({ error: error.message });
     }
 });
-exports.getDepartmentByDni = getDepartmentByDni;
-const updateDepartment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getEmployeeStatusByDni = getEmployeeStatusByDni;
+const updateEmployeeStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const whereClause = (0, employee_helper_1.buildEmployeeWhereClause)(req);
         if (!whereClause) {
@@ -49,18 +49,18 @@ const updateDepartment = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 error: 'You must provide either an id or a dni',
             });
         }
-        const [updated] = yield Department.update(req.body, {
+        const [updated] = yield EmployeeStatus.update(req.body, {
             where: whereClause,
         });
         if (updated) {
-            const updatedDepartment = yield Department.findOne({
+            const updatedStatus = yield EmployeeStatus.findOne({
                 where: whereClause,
             });
-            res.status(200).json(updatedDepartment);
+            res.status(200).json(updatedStatus);
         }
         else {
             res.status(404).json({
-                error: 'Department not found',
+                error: 'Employee status not found',
             });
         }
     }
@@ -68,5 +68,5 @@ const updateDepartment = (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(400).json({ error: error.message });
     }
 });
-exports.updateDepartment = updateDepartment;
-//# sourceMappingURL=departments.controller.js.map
+exports.updateEmployeeStatus = updateEmployeeStatus;
+//# sourceMappingURL=employeeStatus.controller.js.map

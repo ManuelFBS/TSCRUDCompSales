@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import models from '../../models';
 import { buildEmployeeWhereClause } from '../../helpers/employee.helper';
 
-const { Department } = models;
+const { EmployeeStatus } = models;
 
-export const getDepartmentByDni = async (
+export const getEmployeeStatusByDni = async (
     req: Request,
     res: Response,
 ) => {
@@ -17,15 +17,15 @@ export const getDepartmentByDni = async (
             });
         }
 
-        const department = await Department.findOne({
+        const status = await EmployeeStatus.findOne({
             where: whereClause,
         });
 
-        if (department) {
-            res.status(200).json(department);
+        if (status) {
+            res.status(200).json(status);
         } else {
             res.status(404).json({
-                error: 'Department not found for this employee',
+                error: 'Employee status not found for this employee',
             });
         }
     } catch (error: any) {
@@ -33,7 +33,7 @@ export const getDepartmentByDni = async (
     }
 };
 
-export const updateDepartment = async (
+export const updateEmployeeStatus = async (
     req: Request,
     res: Response,
 ) => {
@@ -46,7 +46,7 @@ export const updateDepartment = async (
             });
         }
 
-        const [updated] = await Department.update(
+        const [updated] = await EmployeeStatus.update(
             req.body,
             {
                 where: whereClause,
@@ -54,14 +54,14 @@ export const updateDepartment = async (
         );
 
         if (updated) {
-            const updatedDepartment =
-                await Department.findOne({
+            const updatedStatus =
+                await EmployeeStatus.findOne({
                     where: whereClause,
                 });
-            res.status(200).json(updatedDepartment);
+            res.status(200).json(updatedStatus);
         } else {
             res.status(404).json({
-                error: 'Department not found',
+                error: 'Employee status not found',
             });
         }
     } catch (error: any) {
