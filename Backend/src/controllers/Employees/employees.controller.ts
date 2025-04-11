@@ -5,8 +5,32 @@ import { buildEmployeeWhereClause } from '../../helpers/employee.helper';
 import models from '../../models';
 import sequelize from '../../config/db';
 import { validateSchema } from '../../utils/validationErrorHandler';
+import { User } from '../../models/relations';
 
 const { Employee, Department, EmployeeStatus } = models;
+
+// ~Helper para obtener empleado con toda su información...
+const getFullEmployeeData = async (dni: string) => {
+    const employee = await Employee.findOne({
+        where: { dni },
+    });
+    //
+    if (!employee) return null;
+
+    const department = await Department.findOne({
+        where: { dni },
+    });
+    const status = await EmployeeStatus.findOne({
+        where: { dni },
+    });
+
+    return {
+        ...employee.get({ plain: true }),
+        department: department?.department,
+        position: department?.position,
+        statusWork: status?.statusWork,
+    };
+};
 
 // ~ Se crea un nuevo empleado...
 export const createEmployee = async (
@@ -71,22 +95,29 @@ export const createEmployee = async (
 
             await t.commit();
 
+            // res.status(201).json({
+            //     message:
+            //         'Employee created successfully...!!!',
+            //     ID: newEmployee.id,
+            //     DNI: newEmployee.dni,
+            //     Nombres: newEmployee.name,
+            //     Apellidos: newEmployee.lastName,
+            //     FechaNacimiento: req.body.birthDate, // > Fecha original del input...
+            //     FechaNacimientoFormateada:
+            //         formattedBirthDate, // > Fecha en formato MySQL...
+            //     Email: newEmployee.email,
+            //     Telefono: newEmployee.phone,
+            //     Pais: newEmployee.country,
+            //     EstadoLaboral: statusEmp.statusWork,
+            //     Departamento: dept.department,
+            //     Cargo: dept.position,
+            // });
+
             res.status(201).json({
-                message:
-                    'Employee created successfully...!!!',
-                ID: newEmployee.id,
-                DNI: newEmployee.dni,
-                Nombres: newEmployee.name,
-                Apellidos: newEmployee.lastName,
-                FechaNacimiento: req.body.birthDate, // > Fecha original del input...
-                FechaNacimientoFormateada:
-                    formattedBirthDate, // > Fecha en formato MySQL...
-                Email: newEmployee.email,
-                Telefono: newEmployee.phone,
-                Pais: newEmployee.country,
-                EstadoLaboral: statusEmp.statusWork,
-                Departamento: dept.department,
-                Cargo: dept.position,
+                ...newEmployee.get({ plain: true }),
+                department: dept.department,
+                position: dept.position,
+                statusWork: statusEmp.statusWork,
             });
         } catch (error: any) {
             await t.rollback();
@@ -119,6 +150,7 @@ export const createEmployee = async (
     }
 };
 
+// ~Se obtienen todos los empleados...
 export const getEmployees = async (
     req: Request,
     res: Response,
@@ -134,7 +166,27 @@ export const getEmployees = async (
             ],
         });
 
-        res.status(200).json(employees);
+        const employeeDetails = await Promise.all(
+            employees.map(async (emp) => {
+                const department = await Department.findOne(
+                    { where: { dni: emp.dni } },
+                );
+                //
+                const status = await EmployeeStatus.findOne(
+                    { where: { dni: emp.dni } },
+                );
+
+                return {
+                    ...emp.get({ plain: true }),
+                    department: department?.department,
+                    position: department?.position,
+                    statusWork: status?.statusWork,
+                };
+            }),
+        );
+
+        // !res.status(200).json(employees);
+        res.status(200).json(employeeDetails);
     } catch (error) {
         res.status(500).json({
             error: 'Error interno del servidor',
@@ -144,6 +196,7 @@ export const getEmployees = async (
     }
 };
 
+// ~Se obtienen un empleado determinado...
 export const getEmployeeByIdDni = async (
     req: Request,
     res: Response,
@@ -157,12 +210,16 @@ export const getEmployeeByIdDni = async (
             });
         }
 
-        const employee = await Employee.findOne({
-            where: whereClause,
-        });
+        // !const employee = await Employee.findOne({
+        //  !   where: whereClause,
+        // !});
 
-        if (employee) {
-            res.status(200).json(employee);
+        const fullEmployeeData = await getFullEmployeeData(
+            req.params.dni,
+        );
+
+        if (fullEmployeeData) {
+            res.status(200).json(fullEmployeeData);
         } else {
             res.status(404).json({
                 error: 'Employee not found...!',
@@ -173,6 +230,7 @@ export const getEmployeeByIdDni = async (
     }
 };
 
+// ~Se actualizan los datos de un empleado...
 export const updateEmployee = async (
     req: Request,
     res: Response,
@@ -190,29 +248,72 @@ export const updateEmployee = async (
             req.body,
         ); // > Valida los datos de entrada...
 
-        const [updated] = await Employee.update(
-            validatedData,
-            {
-                where: whereClause,
-            },
-        );
+        //  !const [updated] = await Employee.update(
+        //  !   validatedData,
+        //  !  {
+        //  !       where: whereClause,
+        //  !  },
+        // !);
 
-        if (updated) {
-            const updatedEmployee = await Employee.findOne({
-                where: whereClause,
-            });
+        // !if (updated) {
+        // !   const updatedEmployee = await Employee.findOne({
+        // !      where: whereClause,
+        // !   });
+
+        //  !   res.status(200).json(updatedEmployee);
+        // ! } else {
+        // !    res.status(404).json({
+        // !       error: 'Employee not found',
+        // !   });
+        // ! }
+
+        const t = await sequelize.transaction();
+
+        try {
+            const [updated] = await Employee.update(
+                validatedData,
+                {
+                    where: whereClause,
+                    transaction: t,
+                },
+            );
+
+            if (!updated) {
+                await t.rollback();
+                return res.status(404).json({
+                    error: 'Employee not found',
+                });
+            }
+
+            // *Actualizar departamento si se proporciona en el body...
+            if (req.body.department || req.body.position) {
+                await Department.update(
+                    {
+                        department: req.body.department,
+                        position: req.body.position,
+                    },
+                    {
+                        where: whereClause,
+                        transaction: t,
+                    },
+                );
+            }
+
+            await t.commit();
+            const updatedEmployee =
+                await getFullEmployeeData(req.body.dni);
 
             res.status(200).json(updatedEmployee);
-        } else {
-            res.status(404).json({
-                error: 'Employee not found',
-            });
+        } catch (error: any) {
+            await t.rollback();
+            throw error;
         }
     } catch (error: any) {
         res.status(400).json({ error: error.message });
     }
 };
 
+// ~Se elimina un empleado...
 export const deleteEmployee = async (
     req: Request,
     res: Response,
@@ -226,18 +327,50 @@ export const deleteEmployee = async (
             });
         }
 
-        const deleted = await Employee.destroy({
-            where: whereClause,
-        });
+        // !const deleted = await Employee.destroy({
+        // !    where: whereClause,
+        // !});
 
-        if (deleted) {
+        // !if (deleted) {
+        // !    res.status(200).json({
+        // !        message: 'Employee has been deleted...!!!',
+        // !    });
+        // !} else {
+        // !    res.status(404).json({
+        // !        message: 'Employee not found...!',
+        // !    });
+        // !}
+        const t = await sequelize.transaction();
+
+        try {
+            // *Eliminar en cascada...
+            await Promise.all([
+                User.destroy({
+                    where: whereClause,
+                    transaction: t,
+                }),
+                Department.destroy({
+                    where: whereClause,
+                    transaction: t,
+                }),
+                EmployeeStatus.destroy({
+                    where: whereClause,
+                    transaction: t,
+                }),
+                Employee.destroy({
+                    where: whereClause,
+                    transaction: t,
+                }),
+            ]);
+
+            await t.commit();
             res.status(200).json({
-                message: 'Employee has been deleted...!!!',
+                message:
+                    'Employee and all related data has been deleted...!!!',
             });
-        } else {
-            res.status(404).json({
-                message: 'Employee not found...!',
-            });
+        } catch (error: any) {
+            await t.rollback();
+            throw error;
         }
     } catch (error: any) {
         res.status(500).json({ error: error.message });

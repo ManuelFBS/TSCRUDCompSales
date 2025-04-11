@@ -19,7 +19,24 @@ const employee_helper_1 = require("../../helpers/employee.helper");
 const models_1 = __importDefault(require("../../models"));
 const db_1 = __importDefault(require("../../config/db"));
 const validationErrorHandler_1 = require("../../utils/validationErrorHandler");
+const relations_1 = require("../../models/relations");
 const { Employee, Department, EmployeeStatus } = models_1.default;
+// ~Helper para obtener empleado con toda su información...
+const getFullEmployeeData = (dni) => __awaiter(void 0, void 0, void 0, function* () {
+    const employee = yield Employee.findOne({
+        where: { dni },
+    });
+    //
+    if (!employee)
+        return null;
+    const department = yield Department.findOne({
+        where: { dni },
+    });
+    const status = yield EmployeeStatus.findOne({
+        where: { dni },
+    });
+    return Object.assign(Object.assign({}, employee.get({ plain: true })), { department: department === null || department === void 0 ? void 0 : department.department, position: department === null || department === void 0 ? void 0 : department.position, statusWork: status === null || status === void 0 ? void 0 : status.statusWork });
+});
 // ~ Se crea un nuevo empleado...
 const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -57,21 +74,24 @@ const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 statusWork: 'Activo',
             }, { transaction: t });
             yield t.commit();
-            res.status(201).json({
-                message: 'Employee created successfully...!!!',
-                ID: newEmployee.id,
-                DNI: newEmployee.dni,
-                Nombres: newEmployee.name,
-                Apellidos: newEmployee.lastName,
-                FechaNacimiento: req.body.birthDate, // > Fecha original del input...
-                FechaNacimientoFormateada: formattedBirthDate, // > Fecha en formato MySQL...
-                Email: newEmployee.email,
-                Telefono: newEmployee.phone,
-                Pais: newEmployee.country,
-                EstadoLaboral: statusEmp.statusWork,
-                Departamento: dept.department,
-                Cargo: dept.position,
-            });
+            // res.status(201).json({
+            //     message:
+            //         'Employee created successfully...!!!',
+            //     ID: newEmployee.id,
+            //     DNI: newEmployee.dni,
+            //     Nombres: newEmployee.name,
+            //     Apellidos: newEmployee.lastName,
+            //     FechaNacimiento: req.body.birthDate, // > Fecha original del input...
+            //     FechaNacimientoFormateada:
+            //         formattedBirthDate, // > Fecha en formato MySQL...
+            //     Email: newEmployee.email,
+            //     Telefono: newEmployee.phone,
+            //     Pais: newEmployee.country,
+            //     EstadoLaboral: statusEmp.statusWork,
+            //     Departamento: dept.department,
+            //     Cargo: dept.position,
+            // });
+            res.status(201).json(Object.assign(Object.assign({}, newEmployee.get({ plain: true })), { department: dept.department, position: dept.position, statusWork: statusEmp.statusWork }));
         }
         catch (error) {
             yield t.rollback();
@@ -103,6 +123,7 @@ const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.createEmployee = createEmployee;
+// ~Se obtienen todos los empleados...
 const getEmployees = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const employees = yield Employee.findAll({
@@ -114,7 +135,14 @@ const getEmployees = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 'phone',
             ],
         });
-        res.status(200).json(employees);
+        const employeeDetails = yield Promise.all(employees.map((emp) => __awaiter(void 0, void 0, void 0, function* () {
+            const department = yield Department.findOne({ where: { dni: emp.dni } });
+            //
+            const status = yield EmployeeStatus.findOne({ where: { dni: emp.dni } });
+            return Object.assign(Object.assign({}, emp.get({ plain: true })), { department: department === null || department === void 0 ? void 0 : department.department, position: department === null || department === void 0 ? void 0 : department.position, statusWork: status === null || status === void 0 ? void 0 : status.statusWork });
+        })));
+        // !res.status(200).json(employees);
+        res.status(200).json(employeeDetails);
     }
     catch (error) {
         res.status(500).json({
@@ -124,6 +152,7 @@ const getEmployees = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getEmployees = getEmployees;
+// ~Se obtienen un empleado determinado...
 const getEmployeeByIdDni = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const whereClause = (0, employee_helper_1.buildEmployeeWhereClause)(req);
@@ -132,11 +161,12 @@ const getEmployeeByIdDni = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 error: 'You must provide either an id or a dni',
             });
         }
-        const employee = yield Employee.findOne({
-            where: whereClause,
-        });
-        if (employee) {
-            res.status(200).json(employee);
+        // !const employee = await Employee.findOne({
+        //  !   where: whereClause,
+        // !});
+        const fullEmployeeData = yield getFullEmployeeData(req.params.dni);
+        if (fullEmployeeData) {
+            res.status(200).json(fullEmployeeData);
         }
         else {
             res.status(404).json({
@@ -149,6 +179,7 @@ const getEmployeeByIdDni = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getEmployeeByIdDni = getEmployeeByIdDni;
+// ~Se actualizan los datos de un empleado...
 const updateEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const whereClause = (0, employee_helper_1.buildEmployeeWhereClause)(req);
@@ -158,19 +189,51 @@ const updateEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
             });
         }
         const validatedData = employeeSchema_1.EmployeeSchema.parse(req.body); // > Valida los datos de entrada...
-        const [updated] = yield Employee.update(validatedData, {
-            where: whereClause,
-        });
-        if (updated) {
-            const updatedEmployee = yield Employee.findOne({
+        //  !const [updated] = await Employee.update(
+        //  !   validatedData,
+        //  !  {
+        //  !       where: whereClause,
+        //  !  },
+        // !);
+        // !if (updated) {
+        // !   const updatedEmployee = await Employee.findOne({
+        // !      where: whereClause,
+        // !   });
+        //  !   res.status(200).json(updatedEmployee);
+        // ! } else {
+        // !    res.status(404).json({
+        // !       error: 'Employee not found',
+        // !   });
+        // ! }
+        const t = yield db_1.default.transaction();
+        try {
+            const [updated] = yield Employee.update(validatedData, {
                 where: whereClause,
+                transaction: t,
             });
+            if (!updated) {
+                yield t.rollback();
+                return res.status(404).json({
+                    error: 'Employee not found',
+                });
+            }
+            // *Actualizar departamento si se proporciona en el body...
+            if (req.body.department || req.body.position) {
+                yield Department.update({
+                    department: req.body.department,
+                    position: req.body.position,
+                }, {
+                    where: whereClause,
+                    transaction: t,
+                });
+            }
+            yield t.commit();
+            const updatedEmployee = yield getFullEmployeeData(req.body.dni);
             res.status(200).json(updatedEmployee);
         }
-        else {
-            res.status(404).json({
-                error: 'Employee not found',
-            });
+        catch (error) {
+            yield t.rollback();
+            throw error;
         }
     }
     catch (error) {
@@ -178,6 +241,7 @@ const updateEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.updateEmployee = updateEmployee;
+// ~Se elimina un empleado...
 const deleteEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const whereClause = (0, employee_helper_1.buildEmployeeWhereClause)(req);
@@ -186,18 +250,47 @@ const deleteEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 error: 'You must provide either an id or a dni',
             });
         }
-        const deleted = yield Employee.destroy({
-            where: whereClause,
-        });
-        if (deleted) {
+        // !const deleted = await Employee.destroy({
+        // !    where: whereClause,
+        // !});
+        // !if (deleted) {
+        // !    res.status(200).json({
+        // !        message: 'Employee has been deleted...!!!',
+        // !    });
+        // !} else {
+        // !    res.status(404).json({
+        // !        message: 'Employee not found...!',
+        // !    });
+        // !}
+        const t = yield db_1.default.transaction();
+        try {
+            // *Eliminar en cascada...
+            yield Promise.all([
+                relations_1.User.destroy({
+                    where: whereClause,
+                    transaction: t,
+                }),
+                Department.destroy({
+                    where: whereClause,
+                    transaction: t,
+                }),
+                EmployeeStatus.destroy({
+                    where: whereClause,
+                    transaction: t,
+                }),
+                Employee.destroy({
+                    where: whereClause,
+                    transaction: t,
+                }),
+            ]);
+            yield t.commit();
             res.status(200).json({
-                message: 'Employee has been deleted...!!!',
+                message: 'Employee and all related data has been deleted...!!!',
             });
         }
-        else {
-            res.status(404).json({
-                message: 'Employee not found...!',
-            });
+        catch (error) {
+            yield t.rollback();
+            throw error;
         }
     }
     catch (error) {
