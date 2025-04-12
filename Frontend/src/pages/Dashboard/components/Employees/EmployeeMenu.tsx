@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Container, Row, Col } from 'react-bootstrap';
 
@@ -15,19 +14,26 @@ const EmployeeMenu = () => {
                 <Card.Body>
                     <Row className="g-4">
                         <Col md={6} lg={4}>
-                            <Card.Title>Ingresar Nuevo</Card.Title>
-                            <Card.Text>
-                                Registrar un nuevo empleado en el sistema..,
-                            </Card.Text>
-                            <Button
-                                variant="primary"
-                                onClick={() =>
-                                    navigate('/dashboard/employees/create')
-                                }
-                                className="mt-auto"
-                            >
-                                Nuevo Empleado
-                            </Button>
+                            <Card className="h-100">
+                                <Card.Body className="d-flex flex-column">
+                                    <Card.Title>Ingresar Nuevo</Card.Title>
+                                    <Card.Text>
+                                        Registrar un nuevo empleado en el
+                                        sistema..,
+                                    </Card.Text>
+                                    <Button
+                                        variant="primary"
+                                        onClick={() =>
+                                            navigate(
+                                                '/dashboard/employees/create',
+                                            )
+                                        }
+                                        className="mt-auto"
+                                    >
+                                        Nuevo Empleado
+                                    </Button>
+                                </Card.Body>
+                            </Card>
                         </Col>
 
                         <Col md={6} lg={4}>
