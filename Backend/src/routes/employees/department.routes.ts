@@ -3,6 +3,10 @@ import {
     getDepartmentByDni,
     updateDepartment,
 } from '../../controllers/Employees/departments.controller';
+import {
+    authenticate,
+    authorize,
+} from '../../middlewares/authMiddleware';
 
 const departmentRouter = express.Router();
 
@@ -12,7 +16,18 @@ const asyncHandler =
         Promise.resolve(fn(req, res, next)).catch(next);
     };
 
-departmentRouter.get('/', asyncHandler(getDepartmentByDni));
-departmentRouter.put('/', asyncHandler(updateDepartment));
+// ~Proteger las rutas de departamentos...
+departmentRouter.use(asyncHandler(authenticate));
+
+departmentRouter.get(
+    '/',
+    asyncHandler(authorize(['Owner', 'Admin'])),
+    asyncHandler(getDepartmentByDni),
+);
+departmentRouter.put(
+    '/',
+    asyncHandler(authorize(['Owner', 'Admin'])),
+    asyncHandler(updateDepartment),
+);
 
 export { departmentRouter };

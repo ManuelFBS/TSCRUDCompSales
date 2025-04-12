@@ -4,7 +4,7 @@ import LoginPage from './pages/Login/LoginPage';
 // import Dashboard from './pages/Dashboard/Dashboard';
 import EmployeeMenu from './pages/Dashboard/components/Employees/EmployeeMenu';
 import EmployeeList from './pages/Dashboard/components/Employees/EmployeeList';
-// import EmployeeDetails from './pages/Dashboard/components/Employees/EmployeeDetails';
+import EmployeeDetails from './pages/Dashboard/components/Employees/EmployeeDetails';
 // import CreateEmployee from './pages/Dashboard/components/Employees/CreateEmployee';
 // import SearchEmployee from './pages/Dashboard/components/Employees/SearchEmployee';
 // import UpdateEmployee from './pages/Dashboard/components/Employees/UpdateEmployee';
@@ -60,8 +60,11 @@ const App = () => {
                     <Route path="users" element={<UsersPage />} /> */}
                     <Route index element={<EmployeeMenu />} />
                     <Route path="employees/list" element={<EmployeeList />} />
-                    {/* <Route path="list/:dni" element={<EmployeeDetails />} />
-                    <Route path="create" element={<CreateEmployee />} />
+                    <Route
+                        path="employees/list/:dni"
+                        element={<EmployeeDetails />}
+                    />
+                    {/* <Route path="create" element={<CreateEmployee />} />
                     <Route path="search" element={<SearchEmployee />} />
                     <Route path="update" element={<UpdateEmployee />} />
                     <Route path="delete" element={<DeleteEmployee />} /> */}
