@@ -30,3 +30,13 @@ export interface EmployeeWithDetails extends Employee {
     position: string;
     statusWork: string;
 }
+
+export interface ApiResponse<T> {
+    data: T;
+    message?: string;
+    success: boolean;
+}
+
+export type EmployeeApiResponse = ApiResponse<Employee>;
+export type EmployeesApiResponse = ApiResponse<Employee[]>;
+export type DepartmentApiResponse = ApiResponse<Department>;
