@@ -5,6 +5,7 @@ import {
     Department,
     EmployeeStatus,
     EmployeeWithDetails,
+    ApiResponse,
 } from '../types/employeeTypes';
 
 interface EmployeeState {
@@ -42,41 +43,12 @@ export const useEmployeeStore = create<EmployeeState>((set) => ({
     fetchEmployees: async () => {
         set({ loading: true, error: null });
         try {
-            // const [employeesRes, departmentsRes, statusRes] = await Promise.all(
-            //     [
-            //         api.get('/employees'),
-            //         api.get('/departments'),
-            //         api.get('/employee-status'),
-            //     ],
-            // );
-            // // Mapear los datos para combinar la información
-            // const employeesWithDetails = employeesRes.data.map(
-            //     (employee: Employee) => {
-            //         const department = departmentsRes.data.find(
-            //             (d: Department) => d.dni === employee.dni,
-            //         );
-            //         const status = statusRes.data.find(
-            //             (s: EmployeeStatus) => s.dni === employee.dni,
-            //         );
-            //         return {
-            //             ...employee,
-            //             department: department?.department || '',
-            //             position: department?.position || '',
-            //             statusWork: status?.statusWork || 'Activo',
-            //         };
-            //     },
-            // );
-            // set({
-            //     employees: employeesWithDetails,
-            //     departments: departmentsRes.data,
-            //     employeeStatus: statusRes.data,
-            //     loading: false,
-            // });
-
-            const response = await api.get('/employees');
+            // const response = await api.get('/employees');
+            const response =
+                await api.get<ApiResponse<Employee[]>>('/employees');
 
             set({
-                employees: response.data,
+                employees: response.data.data,
                 loading: false,
             });
 
@@ -89,22 +61,6 @@ export const useEmployeeStore = create<EmployeeState>((set) => ({
     fetchEmployeeByDni: async (dni: string) => {
         set({ loading: true, error: null });
         try {
-            // const [employeeRes, departmentRes, statusRes] = await Promise.all([
-            //     api.get(`/employees/employee/search?dni=${dni}`),
-            //     api.get(`/departments?dni=${dni}`),
-            //     api.get(`/employee-status?dni=${dni}`),
-            // ]);
-
-            // set({
-            //     currentEmployee: {
-            //         ...employeeRes.data,
-            //         department: departmentRes.data.department || '',
-            //         position: departmentRes.data.position || '',
-            //         statusWork: statusRes.data.statusWork || 'Activo',
-            //     },
-            //     loading: false,
-            // });
-
             const response = await api.get(
                 `/employees/employee/search?dni=${dni}`,
             );
